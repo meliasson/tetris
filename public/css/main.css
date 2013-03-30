@@ -1,3 +1,31 @@
-html {
-    color: #222;
+html, body, ul {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #222;
+    color: #DDD;
+    font-family: 'Open Sans', sans-serif;
+    margin: auto;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+h1 {
+    color:#FF1493;
+    font-size: 5em;
+    text-shadow: 0 0 15px #FF1493;
+}
+
+ul {
+    list-style: none;
+}
+
+li {
+    cursor: pointer;
+}
+
+.large-text {
+    font-size: 2em;
 }
