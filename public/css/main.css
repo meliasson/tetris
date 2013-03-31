@@ -22,10 +22,23 @@ ul {
     list-style: none;
 }
 
-li {
+th {
+    padding: 0 1em;
+}
+
+.clickable {
     cursor: pointer;
+}
+
+.screen {
+    display: none;
 }
 
 .large-text {
     font-size: 2em;
+}
+
+#high-scores span {
+    display: block;
+    padding-top: 1em;
 }

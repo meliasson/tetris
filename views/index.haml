@@ -1,3 +1,26 @@
-%ul{:class => "large-text"}
-  %li{:id => "play-list-item"} Play
-  %li{:id => "high-scores-list-item"} High scores
+%ul{:id => "menu", :class => "large-text screen"}
+  %li{:id => "menu-new-game", :class => "clickable"} New game
+  %li{:id => "menu-high-scores", :class => "clickable"} High scores
+
+%div{:id => "high-scores", :class => "large-text screen"}
+  %table
+    %tr
+      %th Rank
+      %th Name
+      %th Score
+    %tr
+      %td #1
+      %td MEL
+      %td 10780
+    %tr
+      %td #2
+      %td VER
+      %td 5655
+    %tr
+      %td #3
+      %td MAR
+      %td 5430
+  %span{:id => "high-scores-menu", :class => "clickable"} Menu
+
+:javascript
+  LETETRIS.run();
