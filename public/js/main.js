@@ -60,7 +60,7 @@ LETETRIS._menuNewGameElementSelected = function() {
 
 LETETRIS._menuResumeGameElementSelected = function() {
     LETETRIS._deactivateMenuScreen();
-    LETETRIS._activateGameScreenForExistingGame();
+    LETETRIS._activateGameScreenForResumedGame();
 }
 
 LETETRIS._menuHighScoresElementSelected = function() {
