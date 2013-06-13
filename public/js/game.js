@@ -2,7 +2,8 @@
 
 var GAME = {
     MODEL: {},
-    VIEW: {}
+    VIEW: {},
+    CONTROLLER: {}
 };
 
 /* GAME */
@@ -18,86 +19,103 @@ GAME.run = function(canvas, newGame) {
 GAME._init = function(canvas) {
     GAME.MODEL.init();
     GAME.VIEW.init(canvas);
-
-    // controller
-
-    GAME._keysDown = {};
-
-    addEventListener("keydown", function (e) {
-	GAME._keysDown[e.keyCode] = true;
-    }, false);
-
-    addEventListener("keyup", function (e) {
-	delete GAME._keysDown[e.keyCode];
-    }, false);
-};
-
-GAME.MODEL.init = function() {
-    GAME.MODEL._lastTick = null;
-
-    GAME.MODEL._grid = [];
-    for (var row = 0; row < 20; row++) {
-        GAME.MODEL._grid[row] = [];
-        for (var col = 0; col < 10; col++) {
-            GAME.MODEL._grid[row][col] = null;
-        }
-    }
-
-    GAME._lastTick = new Date().getTime();
-
-    GAME.MODEL._speed = { current: 0.6, decrement: 0.005, min: 0.1 };
-};
-
-GAME.MODEL.update = function() {
-    var now = new Date().getTime();
-    if ((now - GAME.MODEL._lastTick) / 1000 >= GAME.MODEL._speed.current) {
-        GAME.MODEL._lastTick = now;
-        GAME.VIEW.update();
-    }
-};
-
-GAME.VIEW.init = function(canvas) {
-    GAME.VIEW.canvas = canvas;
-    GAME.VIEW.context = canvas.getContext("2d");
-    GAME.VIEW.context.clearRect(0, 0, canvas.width, canvas.height);
-};
-
-GAME.VIEW.update = function() {
-    GAME.VIEW.context.clearRect(0, 0, GAME.VIEW.canvas.width, GAME.VIEW.canvas.height);
-
-    switch(GAME._randomInt(0, 2)) {
-    case 0:
-        GAME.VIEW.context.fillStyle = '#FF0000';
-        break;
-    case 1:
-        GAME.VIEW.context.fillStyle = '#00FF00';
-        break;
-    case 2:
-        GAME.VIEW.context.fillStyle = '#0000FF';
-        break;
-    }
-
-    GAME.VIEW.context.fillRect(0, 0, 20, 20);
+    GAME.CONTROLLER.init();
 };
 
 GAME._step = function() {
-    if (GAME._keysDown[27]) {
-        SCREENMANAGER._gamePaused();
-        return;
+    var proceed = GAME.CONTROLLER.update();
+    if (proceed) {
+        requestAnimationFrame(GAME._step);
+    }
+};
+
+/* MODEL */
+
+GAME.MODEL.init = function() {
+    this._grid = [];
+    for (var row = 0; row < 20; row++) {
+        this._grid[row] = [];
+        for (var col = 0; col < 10; col++) {
+            this._grid[row][col] = null;
+        }
     }
 
-    GAME.MODEL.update();
+    this._grid[0][4] = true;
 
-    requestAnimationFrame(GAME._step);
+    this._speed = { current: 0.6, decrement: 0.005, min: 0.1 };
+
+    this._lastTick = new Date().getTime();
 };
 
-GAME._colors = {
-    red: '#FF0000',
-    green: '#00FF00',
-    blue: '#0000FF',
-    yellow: '#FFFF00'
+GAME.MODEL.update = function(actions) {
+    var now = new Date().getTime();
+    if ((now - this._lastTick) / 1000 >= this._speed.current) {
+        // TODO: Drop active piece.
+        this._lastTick = now;
+    }
+
+    if (actions[UTIL.Action.ROTATE]) {
+	// TODO: Rotate active piece.
+    }
+
+    GAME.VIEW.update(this._grid);
 };
 
-GAME._randomInt = function(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+/* VIEW */
+
+GAME.VIEW.init = function(canvas) {
+    this._canvas = canvas;
+    this._context = canvas.getContext("2d");
+    this._context.clearRect(0, 0, canvas.width, canvas.height);
 };
+
+GAME.VIEW.update = function(grid) {
+    this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+    this._context.fillStyle = '#FF0000';
+
+    for (var row = 0; row < 20; row++) {
+        for (var col = 0; col < 10; col++) {
+            if (grid[row][col]) {
+                this._context.fillRect(row * 20, col * 20, 20, 20);
+            }
+        }
+    }
+
+    switch(UTIL.randomInt(0, 2)) {
+    case 0:
+
+        break;
+    case 1:
+        this._context.fillStyle = '#00FF00';
+        break;
+    case 2:
+        this._context.fillStyle = '#0000FF';
+        break;
+    }
+
+    this._context.fillRect(0, 0, 20, 20);
+};
+
+/* CONTROLLER */
+
+GAME.CONTROLLER.init = function() {
+    this._keysDown = {};
+
+    addEventListener("keydown", function (e) {
+	GAME.CONTROLLER._keysDown[e.keyCode] = true;
+    }, false);
+
+    addEventListener("keyup", function (e) {
+	delete GAME.CONTROLLER._keysDown[e.keyCode];
+    }, false);
+}
+
+GAME.CONTROLLER.update = function() {
+    if (this._keysDown[UTIL.Action.PAUSE]) {
+        SCREENMANAGER._gamePaused();
+        return false;
+    }
+
+    GAME.MODEL.update(this._keysDown);
+    return true;
+}

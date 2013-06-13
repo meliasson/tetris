@@ -1,6 +1,6 @@
 /* NAMESPACE */
 
-var SCREENMANAGER = SCREENMANAGER || {};
+var SCREENMANAGER = {};
 
 /* CONSTANTS */
 
