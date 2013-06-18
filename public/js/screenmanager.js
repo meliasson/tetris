@@ -31,10 +31,10 @@ SCREENMANAGER.run = function() {
 SCREENMANAGER._initMenuScreen = function() {
     document.getElementById(SCREENMANAGER._MENU_NEW_GAME).addEventListener(
         'click',
-        SCREENMANAGER._menuGameElementSelected);
+        function() { SCREENMANAGER._menuGameElementSelected(true) });
     document.getElementById(SCREENMANAGER._MENU_RESUME_GAME).addEventListener(
         'click',
-        SCREENMANAGER._menuGameElementSelected);
+        function() { SCREENMANAGER._menuGameElementSelected(false) });
     document.getElementById(SCREENMANAGER._MENU_HIGH_SCORES).addEventListener(
         'click',
         SCREENMANAGER._menuHighScoresElementSelected);
@@ -55,9 +55,11 @@ SCREENMANAGER._deactivateMenuScreen = function() {
     document.getElementById(SCREENMANAGER._MENU).style.display = 'none';
 }
 
-SCREENMANAGER._menuGameElementSelected = function() {
+SCREENMANAGER._menuGameElementSelected = function(newGame) {
+    SCREENMANAGER._newGame = newGame;
+
     SCREENMANAGER._deactivateMenuScreen();
-    SCREENMANAGER._activateGameScreen();
+    SCREENMANAGER._activateGameScreen(newGame);
 }
 
 SCREENMANAGER._menuHighScoresElementSelected = function() {

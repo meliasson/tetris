@@ -39,7 +39,7 @@ th {
 }
 
 #game {
-    /*border: 1px solid #DDD;*/
+    border: 1px solid;
     /*border-color: #FF47aa;
     box-shadow: 0 0 10px #FF47aa;*/
     /*height: 400px;

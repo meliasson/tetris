@@ -33,6 +33,10 @@ GAME._step = function() {
 
 GAME.MODEL.init = function() {
     this._grid = [];
+    this._activePiece = {
+        cell: [0, 0]
+    };
+
     for (var row = 0; row < 20; row++) {
         this._grid[row] = [];
         for (var col = 0; col < 10; col++) {
@@ -40,7 +44,7 @@ GAME.MODEL.init = function() {
         }
     }
 
-    this._grid[0][4] = true;
+    //this._grid[0][0] = true;
 
     this._speed = { current: 0.6, decrement: 0.005, min: 0.1 };
 
@@ -50,7 +54,10 @@ GAME.MODEL.init = function() {
 GAME.MODEL.update = function(actions) {
     var now = new Date().getTime();
     if ((now - this._lastTick) / 1000 >= this._speed.current) {
-        // TODO: Drop active piece.
+        if (this._activePiece.cell[1] < 19) {
+            this._activePiece.cell[1] += 1;
+        }
+
         this._lastTick = now;
     }
 
@@ -58,7 +65,7 @@ GAME.MODEL.update = function(actions) {
 	// TODO: Rotate active piece.
     }
 
-    GAME.VIEW.update(this._grid);
+    GAME.VIEW.update(this._grid, this._activePiece);
 };
 
 /* VIEW */
@@ -69,10 +76,14 @@ GAME.VIEW.init = function(canvas) {
     this._context.clearRect(0, 0, canvas.width, canvas.height);
 };
 
-GAME.VIEW.update = function(grid) {
+GAME.VIEW.update = function(grid, activePiece) {
     this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
-    this._context.fillStyle = '#FF0000';
+    this._context.fillStyle = '#DDDDDD';
 
+    this._context.fillRect(
+        activePiece.cell[0] * 20,
+        activePiece.cell[1] * 20, 20, 20);
+/*
     for (var row = 0; row < 20; row++) {
         for (var col = 0; col < 10; col++) {
             if (grid[row][col]) {
@@ -80,10 +91,11 @@ GAME.VIEW.update = function(grid) {
             }
         }
     }
-
+*/
+/*
     switch(UTIL.randomInt(0, 2)) {
     case 0:
-
+        this._context.fillStyle = '#FF0000';
         break;
     case 1:
         this._context.fillStyle = '#00FF00';
@@ -92,8 +104,8 @@ GAME.VIEW.update = function(grid) {
         this._context.fillStyle = '#0000FF';
         break;
     }
-
-    this._context.fillRect(0, 0, 20, 20);
+*/
+    //this._context.fillRect(0, 0, 20, 20);
 };
 
 /* CONTROLLER */
