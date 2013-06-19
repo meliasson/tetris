@@ -25,7 +25,7 @@ GAME._init = function(canvas) {
 GAME._step = function() {
     var proceed = GAME.CONTROLLER.update();
     if (proceed) {
-        requestAnimationFrame(GAME._step);
+        UTIL.requestAnimationFrame.call(window, GAME._step);
     }
 };
 

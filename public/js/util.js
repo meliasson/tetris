@@ -1,5 +1,14 @@
 var UTIL = {};
 
+UTIL.requestAnimationFrame = (function() {
+    return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        function(callback) {
+            window.setTimeout(callback, 1000 / 60);
+        };
+})();
+
 UTIL.randomInt = function(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
