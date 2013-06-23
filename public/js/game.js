@@ -40,72 +40,106 @@ GAME.MODEL.init = function() {
     for (var row = 0; row < 20; row++) {
         this._grid[row] = [];
         for (var col = 0; col < 10; col++) {
-            this._grid[row][col] = null;
+            this._grid[row][col] = false;
         }
     }
 
-    //this._grid[0][0] = true;
-
     this._speed = { current: 0.6, decrement: 0.005, min: 0.1 };
-
     this._lastTick = new Date().getTime();
 };
 
 GAME.MODEL.update = function(actions) {
-    var now = new Date().getTime();
-    if ((now - this._lastTick) / 1000 >= this._speed.current) {
-        if (this._activePiece.cell[1] < 19) {
-            this._activePiece.cell[1] += 1;
+    // Apply gravity
+    if (this._pieceShouldFall()) {
+        if (this._pieceCanFall()) {
+            this._activePiece.cell[0] += 1;
         }
-
-        this._lastTick = now;
+        else {
+            this._grid[this._activePiece.cell[0]][this._activePiece.cell[1]] = true;
+            this._activePiece = {
+                cell: [0, 0]
+            };
+        }
     }
+
+    //
+    // Apply user input
+    //
 
     if (actions[UTIL.Action.ROTATE]) {
 	// TODO: Rotate active piece.
     }
 
+    if (actions[UTIL.Action.LEFT]) {
+        delete actions[UTIL.Action.LEFT];
+        if (this._activePiece.cell[1] > 0 && this._grid[this._activePiece.cell[0]][this._activePiece.cell[1] - 1] === false) {
+            this._activePiece.cell[1] -= 1;
+        }
+    }
+
+    if (actions[UTIL.Action.RIGHT]) {
+        delete actions[UTIL.Action.RIGHT];
+        if (this._activePiece.cell[1] < 10 && this._grid[this._activePiece.cell[0]][this._activePiece.cell[1] + 1] === false) {
+            this._activePiece.cell[1] += 1;
+        }
+    }
+
+    // Update view
     GAME.VIEW.update(this._grid, this._activePiece);
 };
+
+GAME.MODEL._pieceShouldFall = function() {
+    var now = new Date().getTime();
+
+    if ((now - this._lastTick) / 1000 >= this._speed.current) {
+        this._lastTick = now;
+        return true;
+    }
+    else {
+        return false;
+    }
+};
+
+GAME.MODEL._pieceCanFall = function() {
+    var rowsRemain = this._activePiece.cell[0] < 19;
+    var nextRowIsFree = this._grid[this._activePiece.cell[0] + 1][this._activePiece.cell[1]] === false;
+    return rowsRemain && nextRowIsFree;
+}
 
 /* VIEW */
 
 GAME.VIEW.init = function(canvas) {
     this._canvas = canvas;
     this._context = canvas.getContext("2d");
+    this._context.fillStyle = '#DDDDDD';
     this._context.clearRect(0, 0, canvas.width, canvas.height);
 };
 
 GAME.VIEW.update = function(grid, activePiece) {
-    this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
-    this._context.fillStyle = '#DDDDDD';
-
-    this._context.fillRect(
-        activePiece.cell[0] * 20,
-        activePiece.cell[1] * 20, 20, 20);
-/*
+    // clear canvas
     for (var row = 0; row < 20; row++) {
         for (var col = 0; col < 10; col++) {
-            if (grid[row][col]) {
-                this._context.fillRect(row * 20, col * 20, 20, 20);
+            if (grid[row][col] === false) {
+                this._context.clearRect(col * 20, row * 20, 20, 20);
             }
         }
     }
-*/
-/*
-    switch(UTIL.randomInt(0, 2)) {
-    case 0:
-        this._context.fillStyle = '#FF0000';
-        break;
-    case 1:
-        this._context.fillStyle = '#00FF00';
-        break;
-    case 2:
-        this._context.fillStyle = '#0000FF';
-        break;
+
+    // draw active piece
+    this._context.fillRect(
+        activePiece.cell[1] * 20,
+        activePiece.cell[0] * 20,
+        20,
+        20);
+
+    // draw inactive pieces
+    for (var row = 0; row < 20; row++) {
+        for (var col = 0; col < 10; col++) {
+            if (grid[row][col] === true) {
+                this._context.fillRect(col * 20, row * 20, 20, 20);
+            }
+        }
     }
-*/
-    //this._context.fillRect(0, 0, 20, 20);
 };
 
 /* CONTROLLER */

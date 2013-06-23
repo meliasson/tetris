@@ -16,8 +16,8 @@ UTIL.randomInt = function(min, max) {
 UTIL.Action = {
     DOWN: '',
     DROP: '',
-    LEFT: '',
+    LEFT: 37,
     PAUSE: 27,
-    RIGHT: '',
+    RIGHT: 39,
     ROTATE: ''
 };
