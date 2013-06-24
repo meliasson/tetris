@@ -101,9 +101,13 @@ GAME.MODEL._pieceShouldFall = function() {
 };
 
 GAME.MODEL._pieceCanFall = function() {
-    var rowsRemain = this._activePiece.cell[0] < 19;
-    var nextRowIsFree = this._grid[this._activePiece.cell[0] + 1][this._activePiece.cell[1]] === false;
-    return rowsRemain && nextRowIsFree;
+    if (this._activePiece.cell[0] < 19) {
+        if (this._grid[this._activePiece.cell[0] + 1][this._activePiece.cell[1]] === false) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /* VIEW */
