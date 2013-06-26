@@ -8,8 +8,8 @@ var GAME = {
 
 /* GAME */
 
-GAME.run = function(canvas, newGame) {
-    if (newGame) {
+GAME.run = function(canvas, gameState) {
+    if (gameState == 0 || gameState == 2) {
         GAME._init(canvas);
     }
 
@@ -56,6 +56,11 @@ GAME.MODEL.update = function(actions) {
         }
         else {
             this._grid[this._activePiece.cell[0]][this._activePiece.cell[1]] = true;
+
+            if (this._grid[0][0] == true) {
+                return false;
+            }
+
             this._activePiece = {
                 cell: [0, 0]
             };
@@ -86,6 +91,8 @@ GAME.MODEL.update = function(actions) {
 
     // Update view
     GAME.VIEW.update(this._grid, this._activePiece);
+
+    return true;
 };
 
 GAME.MODEL._pieceShouldFall = function() {
@@ -162,10 +169,14 @@ GAME.CONTROLLER.init = function() {
 
 GAME.CONTROLLER.update = function() {
     if (this._keysDown[UTIL.Action.PAUSE]) {
-        SCREENMANAGER._gamePaused();
+        SCREENMANAGER.gamePaused();
         return false;
     }
 
-    GAME.MODEL.update(this._keysDown);
+    if (GAME.MODEL.update(this._keysDown) === false) {
+        SCREENMANAGER.gameOver();
+        return false;
+    }
+
     return true;
 }

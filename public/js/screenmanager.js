@@ -6,6 +6,7 @@ var SCREENMANAGER = {};
 
 SCREENMANAGER._MENU = 'menu';
 SCREENMANAGER._MENU_NEW_GAME = 'menu-new-game';
+SCREENMANAGER._MENU_GAME_OVER = 'menu-game-over';
 SCREENMANAGER._MENU_RESUME_GAME = 'menu-resume-game';
 SCREENMANAGER._MENU_HIGH_SCORES = 'menu-high-scores';
 
@@ -16,7 +17,7 @@ SCREENMANAGER._GAME = 'game';
 
 /* VARIABLES */
 
-SCREENMANAGER._newGame = true;
+SCREENMANAGER._gameState = 0;
 
 /* INIT AND RUN */
 
@@ -31,10 +32,16 @@ SCREENMANAGER.run = function() {
 SCREENMANAGER._initMenuScreen = function() {
     document.getElementById(this._MENU_NEW_GAME).addEventListener(
         'click',
-        function() { SCREENMANAGER._menuGameElementSelected(true) });
+        function() {
+            this._gameState = 0;
+            SCREENMANAGER._menuGameElementSelected()
+        });
     document.getElementById(this._MENU_RESUME_GAME).addEventListener(
         'click',
-        function() { SCREENMANAGER._menuGameElementSelected(false) });
+        function() {
+            this._gameState = 1;
+            SCREENMANAGER._menuGameElementSelected()
+        });
     document.getElementById(this._MENU_HIGH_SCORES).addEventListener(
         'click',
         this._menuHighScoresElementSelected);
@@ -43,11 +50,17 @@ SCREENMANAGER._initMenuScreen = function() {
 SCREENMANAGER._activateMenuScreen = function() {
     document.getElementById(this._MENU).style.display = 'inline-block';
 
-    if (SCREENMANAGER._newGame) {
+    if (SCREENMANAGER._gameState === 0) {
+        document.getElementById(this._MENU_GAME_OVER).style.display = 'none';
         document.getElementById(this._MENU_RESUME_GAME).style.display = 'none';
     }
-    else {
+    else if (SCREENMANAGER._gameState === 1) {
+        document.getElementById(this._MENU_GAME_OVER).style.display = 'none';
         document.getElementById(this._MENU_RESUME_GAME).style.display = 'inline';
+    }
+    else if (SCREENMANAGER._gameState === 2) {
+        document.getElementById(this._MENU_GAME_OVER).style.display = 'inline';
+        document.getElementById(this._MENU_RESUME_GAME).style.display = 'none';
     }
 }
 
@@ -55,11 +68,9 @@ SCREENMANAGER._deactivateMenuScreen = function() {
     document.getElementById(this._MENU).style.display = 'none';
 }
 
-SCREENMANAGER._menuGameElementSelected = function(newGame) {
-    SCREENMANAGER._newGame = newGame;
-
+SCREENMANAGER._menuGameElementSelected = function() {
     SCREENMANAGER._deactivateMenuScreen();
-    SCREENMANAGER._activateGameScreen(newGame);
+    SCREENMANAGER._activateGameScreen();
 }
 
 SCREENMANAGER._menuHighScoresElementSelected = function() {
@@ -85,23 +96,29 @@ SCREENMANAGER._deactivateHighScoreScreen = function() {
 
 SCREENMANAGER._highScoresMenuElementSelected = function() {
     this._deactivateHighScoreScreen();
-    this._activateMenuScreen(SCREENMANAGER._newGame);
+    this._activateMenuScreen(SCREENMANAGER._gameState);
 }
 
 /* GAME SCREEN */
 
+SCREENMANAGER.gamePaused = function() {
+    this._gameState = 1;
+    this._deactivateGameScreen();
+    this._activateMenuScreen();
+}
+
+SCREENMANAGER.gameOver = function() {
+    this._gameState = 2;
+    this._deactivateGameScreen();
+    this._activateMenuScreen();
+}
+
 SCREENMANAGER._activateGameScreen = function() {
     var canvas = document.getElementById(this._GAME);
     canvas.style.display = 'inline';
-    GAME.run(canvas, this._newGame);
+    GAME.run(canvas, this._gameState);
 }
 
 SCREENMANAGER._deactivateGameScreen = function() {
     document.getElementById(this._GAME).style.display = 'none';
-}
-
-SCREENMANAGER._gamePaused = function() {
-    this._newGame = false;
-    this._deactivateGameScreen();
-    this._activateMenuScreen();
 }
