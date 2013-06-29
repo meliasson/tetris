@@ -26,6 +26,10 @@ th {
     padding: 0 1em;
 }
 
+th, td {
+    text-align: center;
+}
+
 .clickable {
     cursor: pointer;
 }

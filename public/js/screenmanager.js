@@ -34,17 +34,19 @@ screenmanager._initMenuScreen = function() {
         'click',
         function() {
             screenmanager._gameState = util.gameState.none;
-            screenmanager._menuGameElementSelected()
+            screenmanager._menuGameElementSelected();
         });
     document.getElementById(this._menuResumeGame).addEventListener(
         'click',
         function() {
             screenmanager._gameState = util.gameState.paused;
-            screenmanager._menuGameElementSelected()
+            screenmanager._menuGameElementSelected();
         });
     document.getElementById(this._menuHighScores).addEventListener(
         'click',
-        this._menuHighScoresElementSelected);
+        function() {
+            screenmanager._menuHighScoresElementSelected();
+        });
 }
 
 screenmanager._activateMenuScreen = function() {
@@ -83,7 +85,9 @@ screenmanager._menuHighScoresElementSelected = function() {
 screenmanager._initHighScoresScreen = function() {
     document.getElementById(this._highScoresMenu).addEventListener(
         'click',
-        this._highScoresMenuElementSelected);
+        function() {
+            screenmanager._highScoresMenuElementSelected()
+        });
 }
 
 screenmanager._activateHighScoreScreen = function() {
@@ -95,8 +99,8 @@ screenmanager._deactivateHighScoreScreen = function() {
 }
 
 screenmanager._highScoresMenuElementSelected = function() {
-    this._deactivateHighScoreScreen();
-    this._activateMenuScreen(screenmanager._gameState);
+    screenmanager._deactivateHighScoreScreen();
+    screenmanager._activateMenuScreen(screenmanager._gameState);
 }
 
 /* GAME SCREEN */
