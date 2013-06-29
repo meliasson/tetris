@@ -94,6 +94,9 @@ game.model.update = function(actions) {
         while (this._pieceCanFall()) {
             this._activePiece.cell[0] += 1;
         }
+
+        // Make piece stay where it landed by forcing new tick.
+        this._lastTick = 0;
     }
 
     // Update view
