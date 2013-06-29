@@ -1,5 +1,5 @@
-var LETETRIS = {};
+var letetris = {};
 
-LETETRIS.run = function() {
-    SCREENMANAGER.run();
+letetris.run = function() {
+    screenmanager.run();
 }

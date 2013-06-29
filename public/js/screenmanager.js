@@ -1,124 +1,124 @@
 /* NAMESPACE */
 
-var SCREENMANAGER = {};
-
-/* CONSTANTS */
-
-SCREENMANAGER._MENU = 'menu';
-SCREENMANAGER._MENU_NEW_GAME = 'menu-new-game';
-SCREENMANAGER._MENU_GAME_OVER = 'menu-game-over';
-SCREENMANAGER._MENU_RESUME_GAME = 'menu-resume-game';
-SCREENMANAGER._MENU_HIGH_SCORES = 'menu-high-scores';
-
-SCREENMANAGER._HIGH_SCORES = 'high-scores';
-SCREENMANAGER._HIGH_SCORES_MENU = 'high-scores-menu';
-
-SCREENMANAGER._GAME = 'game';
-
-/* VARIABLES */
-
-SCREENMANAGER._gameState = 0;
+var screenmanager = {};
 
 /* INIT AND RUN */
 
-SCREENMANAGER.run = function() {
-    SCREENMANAGER._initMenuScreen();
-    SCREENMANAGER._initHighScoresScreen();
-    SCREENMANAGER._activateMenuScreen();
+screenmanager.run = function() {
+    this.initConstants();
+    this.initVariables();
+    this._initMenuScreen();
+    this._initHighScoresScreen();
+    this._activateMenuScreen();
+}
+
+screenmanager.initConstants = function() {
+    this._menu = 'menu';
+    this._menuNewGame = 'menu-new-game';
+    this._menuGameOver = 'menu-game-over';
+    this._menuResumeGame = 'menu-resume-game';
+    this._menuHighScores = 'menu-high-scores';
+    this._highScores = 'high-scores';
+    this._highScoresMenu = 'high-scores-menu';
+    this._game = 'game';
+}
+
+screenmanager.initVariables = function() {
+    this._gameState = util.gameState.none;
 }
 
 /* MENU SCREEN */
 
-SCREENMANAGER._initMenuScreen = function() {
-    document.getElementById(this._MENU_NEW_GAME).addEventListener(
+screenmanager._initMenuScreen = function() {
+    document.getElementById(this._menuNewGame).addEventListener(
         'click',
         function() {
-            this._gameState = 0;
-            SCREENMANAGER._menuGameElementSelected()
+            screenmanager._gameState = util.gameState.none;
+            screenmanager._menuGameElementSelected()
         });
-    document.getElementById(this._MENU_RESUME_GAME).addEventListener(
+    document.getElementById(this._menuResumeGame).addEventListener(
         'click',
         function() {
-            this._gameState = 1;
-            SCREENMANAGER._menuGameElementSelected()
+            screenmanager._gameState = util.gameState.paused;
+            screenmanager._menuGameElementSelected()
         });
-    document.getElementById(this._MENU_HIGH_SCORES).addEventListener(
+    document.getElementById(this._menuHighScores).addEventListener(
         'click',
         this._menuHighScoresElementSelected);
 }
 
-SCREENMANAGER._activateMenuScreen = function() {
-    document.getElementById(this._MENU).style.display = 'inline-block';
+screenmanager._activateMenuScreen = function() {
+    document.getElementById(this._menu).style.display = 'inline-block';
 
-    if (SCREENMANAGER._gameState === 0) {
-        document.getElementById(this._MENU_GAME_OVER).style.display = 'none';
-        document.getElementById(this._MENU_RESUME_GAME).style.display = 'none';
+    if (this._gameState === util.gameState.none) {
+        document.getElementById(this._menuGameOver).style.display = 'none';
+        document.getElementById(this._menuResumeGame).style.display = 'none';
     }
-    else if (SCREENMANAGER._gameState === 1) {
-        document.getElementById(this._MENU_GAME_OVER).style.display = 'none';
-        document.getElementById(this._MENU_RESUME_GAME).style.display = 'inline';
+    else if (this._gameState === util.gameState.paused) {
+        document.getElementById(this._menuGameOver).style.display = 'none';
+        document.getElementById(this._menuResumeGame).style.display = 'inline';
     }
-    else if (SCREENMANAGER._gameState === 2) {
-        document.getElementById(this._MENU_GAME_OVER).style.display = 'inline';
-        document.getElementById(this._MENU_RESUME_GAME).style.display = 'none';
+    else if (this._gameState === util.gameState.over) {
+        document.getElementById(this._menuGameOver).style.display = 'inline';
+        document.getElementById(this._menuResumeGame).style.display = 'none';
     }
 }
 
-SCREENMANAGER._deactivateMenuScreen = function() {
-    document.getElementById(this._MENU).style.display = 'none';
+screenmanager._deactivateMenuScreen = function() {
+    document.getElementById(this._menu).style.display = 'none';
 }
 
-SCREENMANAGER._menuGameElementSelected = function() {
-    SCREENMANAGER._deactivateMenuScreen();
-    SCREENMANAGER._activateGameScreen();
+screenmanager._menuGameElementSelected = function() {
+    this._deactivateMenuScreen();
+    this._activateGameScreen();
 }
 
-SCREENMANAGER._menuHighScoresElementSelected = function() {
-    SCREENMANAGER._deactivateMenuScreen();
-    SCREENMANAGER._activateHighScoreScreen();
+screenmanager._menuHighScoresElementSelected = function() {
+    this._deactivateMenuScreen();
+    this._activateHighScoreScreen();
 }
 
 /* HIGH SCORES SCREEN */
 
-SCREENMANAGER._initHighScoresScreen = function() {
-    document.getElementById(this._HIGH_SCORES_MENU).addEventListener(
+screenmanager._initHighScoresScreen = function() {
+    document.getElementById(this._highScoresMenu).addEventListener(
         'click',
         this._highScoresMenuElementSelected);
 }
 
-SCREENMANAGER._activateHighScoreScreen = function() {
-    document.getElementById(this._HIGH_SCORES).style.display = 'inline-block';
+screenmanager._activateHighScoreScreen = function() {
+    document.getElementById(this._highScores).style.display = 'inline-block';
 }
 
-SCREENMANAGER._deactivateHighScoreScreen = function() {
-    document.getElementById(this._HIGH_SCORES).style.display = 'none';
+screenmanager._deactivateHighScoreScreen = function() {
+    document.getElementById(this._highScores).style.display = 'none';
 }
 
-SCREENMANAGER._highScoresMenuElementSelected = function() {
+screenmanager._highScoresMenuElementSelected = function() {
     this._deactivateHighScoreScreen();
-    this._activateMenuScreen(SCREENMANAGER._gameState);
+    this._activateMenuScreen(screenmanager._gameState);
 }
 
 /* GAME SCREEN */
 
-SCREENMANAGER.gamePaused = function() {
-    this._gameState = 1;
+screenmanager.gamePaused = function() {
+    this._gameState = util.gameState.paused;
     this._deactivateGameScreen();
     this._activateMenuScreen();
 }
 
-SCREENMANAGER.gameOver = function() {
-    this._gameState = 2;
+screenmanager.gameOver = function() {
+    this._gameState = util.gameState.over;
     this._deactivateGameScreen();
     this._activateMenuScreen();
 }
 
-SCREENMANAGER._activateGameScreen = function() {
-    var canvas = document.getElementById(this._GAME);
+screenmanager._activateGameScreen = function() {
+    var canvas = document.getElementById(this._game);
     canvas.style.display = 'inline';
-    GAME.run(canvas, this._gameState);
+    game.run(canvas, this._gameState);
 }
 
-SCREENMANAGER._deactivateGameScreen = function() {
-    document.getElementById(this._GAME).style.display = 'none';
+screenmanager._deactivateGameScreen = function() {
+    document.getElementById(this._game).style.display = 'none';
 }

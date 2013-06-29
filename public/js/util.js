@@ -1,6 +1,6 @@
-var UTIL = {};
+var util = {};
 
-UTIL.requestAnimationFrame = (function() {
+util.requestAnimationFrame = (function() {
     return window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
         window.mozRequestAnimationFrame ||
@@ -9,15 +9,26 @@ UTIL.requestAnimationFrame = (function() {
         };
 })();
 
-UTIL.randomInt = function(min, max) {
+util.randomInt = function(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-UTIL.Action = {
-    DOWN: '',
-    DROP: '',
-    LEFT: 37,
-    PAUSE: 27,
-    RIGHT: 39,
-    ROTATE: ''
+util.action = {
+    left: 37,
+    right: 39,
+    rotate: 38,
+    drop: 40,
+    pause: 27
+};
+
+util.grid = {
+    nrOfRows: 20,
+    nrOfColumns: 10,
+    cellSize: 20
+};
+
+util.gameState = {
+    none: 0,
+    paused: 1,
+    over: 2
 };

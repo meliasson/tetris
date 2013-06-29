@@ -1,37 +1,37 @@
 /* NAMESPACE */
 
-var GAME = {
-    MODEL: {},
-    VIEW: {},
-    CONTROLLER: {}
+var game = {
+    model: {},
+    view: {},
+    controller: {}
 };
 
-/* GAME */
+/* game */
 
-GAME.run = function(canvas, gameState) {
-    if (gameState == 0 || gameState == 2) {
-        GAME._init(canvas);
+game.run = function(canvas, state) {
+    if (state == util.gameState.none || state == util.gameState.over) {
+        game._init(canvas);
     }
 
-    GAME._step(canvas);
+    game._step(canvas);
 };
 
-GAME._init = function(canvas) {
-    GAME.MODEL.init();
-    GAME.VIEW.init(canvas);
-    GAME.CONTROLLER.init();
+game._init = function(canvas) {
+    game.model.init();
+    game.view.init(canvas);
+    game.controller.init();
 };
 
-GAME._step = function() {
-    var proceed = GAME.CONTROLLER.update();
+game._step = function() {
+    var proceed = game.controller.update();
     if (proceed) {
-        UTIL.requestAnimationFrame.call(window, GAME._step);
+        util.requestAnimationFrame.call(window, game._step);
     }
 };
 
 /* MODEL */
 
-GAME.MODEL.init = function() {
+game.model.init = function() {
     this._grid = [];
     this._activePiece = {
         cell: [0, 0]
@@ -48,7 +48,7 @@ GAME.MODEL.init = function() {
     this._lastTick = new Date().getTime();
 };
 
-GAME.MODEL.update = function(actions) {
+game.model.update = function(actions) {
     // Apply gravity
     if (this._pieceShouldFall()) {
         if (this._pieceCanFall()) {
@@ -71,31 +71,38 @@ GAME.MODEL.update = function(actions) {
     // Apply user input
     //
 
-    if (actions[UTIL.Action.ROTATE]) {
+    if (actions[util.action.rotate]) {
 	// TODO: Rotate active piece.
     }
 
-    if (actions[UTIL.Action.LEFT]) {
-        delete actions[UTIL.Action.LEFT];
+    if (actions[util.action.left]) {
+        delete actions[util.action.left];
         if (this._activePiece.cell[1] > 0 && this._grid[this._activePiece.cell[0]][this._activePiece.cell[1] - 1] === false) {
             this._activePiece.cell[1] -= 1;
         }
     }
 
-    if (actions[UTIL.Action.RIGHT]) {
-        delete actions[UTIL.Action.RIGHT];
+    if (actions[util.action.right]) {
+        delete actions[util.action.right];
         if (this._activePiece.cell[1] < 10 && this._grid[this._activePiece.cell[0]][this._activePiece.cell[1] + 1] === false) {
             this._activePiece.cell[1] += 1;
         }
     }
 
+    if (actions[util.action.drop]) {
+        delete actions[util.action.drop];
+        while (this._pieceCanFall()) {
+            this._activePiece.cell[0] += 1;
+        }
+    }
+
     // Update view
-    GAME.VIEW.update(this._grid, this._activePiece);
+    game.view.update(this._grid, this._activePiece);
 
     return true;
 };
 
-GAME.MODEL._pieceShouldFall = function() {
+game.model._pieceShouldFall = function() {
     var now = new Date().getTime();
 
     if ((now - this._lastTick) / 1000 >= this._speed.current) {
@@ -107,7 +114,7 @@ GAME.MODEL._pieceShouldFall = function() {
     }
 };
 
-GAME.MODEL._pieceCanFall = function() {
+game.model._pieceCanFall = function() {
     if (this._activePiece.cell[0] < 19) {
         if (this._grid[this._activePiece.cell[0] + 1][this._activePiece.cell[1]] === false) {
             return true;
@@ -119,14 +126,14 @@ GAME.MODEL._pieceCanFall = function() {
 
 /* VIEW */
 
-GAME.VIEW.init = function(canvas) {
+game.view.init = function(canvas) {
     this._canvas = canvas;
     this._context = canvas.getContext("2d");
     this._context.fillStyle = '#DDDDDD';
     this._context.clearRect(0, 0, canvas.width, canvas.height);
 };
 
-GAME.VIEW.update = function(grid, activePiece) {
+game.view.update = function(grid, activePiece) {
     // clear canvas
     for (var row = 0; row < 20; row++) {
         for (var col = 0; col < 10; col++) {
@@ -155,26 +162,30 @@ GAME.VIEW.update = function(grid, activePiece) {
 
 /* CONTROLLER */
 
-GAME.CONTROLLER.init = function() {
+game.controller.init = function() {
     this._keysDown = {};
 
-    addEventListener("keydown", function (e) {
-	GAME.CONTROLLER._keysDown[e.keyCode] = true;
-    }, false);
+    addEventListener(
+        "keydown",
+        function (e) {
+	    game.controller._keysDown[e.keyCode] = true;
+        });
 
-    addEventListener("keyup", function (e) {
-	delete GAME.CONTROLLER._keysDown[e.keyCode];
-    }, false);
+    addEventListener(
+        "keyup",
+        function (e) {
+	    delete game.controller._keysDown[e.keyCode];
+        });
 }
 
-GAME.CONTROLLER.update = function() {
-    if (this._keysDown[UTIL.Action.PAUSE]) {
-        SCREENMANAGER.gamePaused();
+game.controller.update = function() {
+    if (this._keysDown[util.action.pause]) {
+        screenmanager.gamePaused();
         return false;
     }
 
-    if (GAME.MODEL.update(this._keysDown) === false) {
-        SCREENMANAGER.gameOver();
+    if (game.model.update(this._keysDown) === false) {
+        screenmanager.gameOver();
         return false;
     }
 
