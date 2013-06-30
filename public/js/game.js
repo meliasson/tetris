@@ -194,7 +194,7 @@ game.controller.init = function(canvas) {
     addEventListener(
         'touchstart',
         function(e) {
-            e.preventDefault();
+            //e.preventDefault();
             var x = e.touches[0].pageX;
             var y = e.touches[0].pageY;
             var rect = game.controller._canvas.getBoundingClientRect();
