@@ -19,7 +19,7 @@ game.run = function(canvas, state) {
 game._init = function(canvas) {
     game.model.init();
     game.view.init(canvas);
-    game.controller.init();
+    game.controller.init(canvas);
 };
 
 game._step = function() {
@@ -165,9 +165,20 @@ game.view.update = function(grid, activePiece) {
 
 /* CONTROLLER */
 
-game.controller.init = function() {
+game.controller.init = function(canvas) {
+    this._canvas = canvas;
     this._keysDown = {};
-
+/*
+    addEventListener(
+        'mousedown',
+        function (e) {
+            e.preventDefault();
+            var rect = game.controller._canvas.getBoundingClientRect();
+            if (e.pageX > rect.right && e.pageY > rect.top && e.pageY < rect.bottom) {
+                game.controller._keysDown[util.action.right] = true;
+            }
+        });
+*/
     addEventListener(
         "keydown",
         function (e) {
@@ -179,6 +190,40 @@ game.controller.init = function() {
         function (e) {
 	    delete game.controller._keysDown[e.keyCode];
         });
+
+    addEventListener(
+        'touchstart',
+        function(e) {
+            e.preventDefault();
+            var x = e.touches[0].pageX;
+            var y = e.touches[0].pageY;
+            var rect = game.controller._canvas.getBoundingClientRect();
+
+            if (x < rect.left && y > rect.top && y < rect.bottom) {
+                game.controller._keysDown[util.action.left] = true;
+            }
+
+            if (x > rect.right && y > rect.top && y < rect.bottom) {
+                game.controller._keysDown[util.action.right] = true;
+            }
+
+            if (x > rect.left && x < rect.right && y > rect.bottom) {
+                game.controller._keysDown[util.action.drop] = true;
+            }
+        });
+
+    window.addEventListener('touchmove', function(e) {
+        // we're not interested in this,
+        // but prevent default behaviour
+        // so the screen doesn't scroll
+        // or zoom
+        e.preventDefault();
+    }, false);
+
+    window.addEventListener('touchend', function(e) {
+        // as above
+        e.preventDefault();
+    }, false);
 }
 
 game.controller.update = function() {
