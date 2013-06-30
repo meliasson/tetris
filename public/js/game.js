@@ -211,7 +211,7 @@ game.controller.init = function(canvas) {
                 game.controller._keysDown[util.action.drop] = true;
             }
         });
-
+/*
     window.addEventListener('touchmove', function(e) {
         e.preventDefault();
     }, false);
@@ -219,6 +219,7 @@ game.controller.init = function(canvas) {
     window.addEventListener('touchend', function(e) {
         e.preventDefault();
     }, false);
+*/
 }
 
 game.controller.update = function() {
