@@ -32,39 +32,15 @@ game._step = function() {
 /* MODEL */
 
 game.model.init = function() {
-    this._grid = [];
-    this._activePiece = {
-        cell: [0, 0]
-    };
-
-    for (var row = 0; row < 20; row++) {
-        this._grid[row] = [];
-        for (var col = 0; col < 10; col++) {
-            this._grid[row][col] = false;
-        }
-    }
-
+    this._grid = this._initGrid();
+    this._activePiece = { cell: [0, 4] };
     this._speed = { current: 0.6, decrement: 0.005, min: 0.1 };
     this._lastTick = new Date().getTime();
 };
 
 game.model.update = function(actions) {
-    // Apply gravity
-    if (this._pieceShouldFall()) {
-        if (this._pieceCanFall()) {
-            this._activePiece.cell[0] += 1;
-        }
-        else {
-            this._grid[this._activePiece.cell[0]][this._activePiece.cell[1]] = true;
-
-            if (this._grid[0][0] == true) {
-                return false;
-            }
-
-            this._activePiece = {
-                cell: [0, 0]
-            };
-        }
+    if (this._applyGravity() === false) {
+        return false;
     }
 
     //
@@ -105,6 +81,27 @@ game.model.update = function(actions) {
     return true;
 };
 
+game.model._applyGravity = function() {
+    if (this._pieceShouldFall()) {
+        if (this._pieceCanFall()) {
+            this._activePiece.cell[0] += 1;
+        }
+        else {
+            this._grid[this._activePiece.cell[0]][this._activePiece.cell[1]] = true;
+
+            if (this._grid[0][4] == true) {
+                return false;
+            }
+
+            this._activePiece = {
+                cell: [0, 4]
+            };
+        }
+    }
+
+    return true;
+}
+
 game.model._pieceShouldFall = function() {
     var now = new Date().getTime();
 
@@ -116,6 +113,19 @@ game.model._pieceShouldFall = function() {
         return false;
     }
 };
+
+game.model._initGrid = function() {
+    var grid = [];
+
+    for (var row = 0; row < util.grid.nrOfRows; row++) {
+        grid[row] = [];
+        for (var col = 0; col < util.grid.nrOfColumns; col++) {
+            grid[row][col] = false;
+        }
+    }
+
+    return grid;
+}
 
 game.model._pieceCanFall = function() {
     if (this._activePiece.cell[0] < 19) {
@@ -171,13 +181,13 @@ game.controller.init = function(canvas) {
 
     addEventListener(
         "keydown",
-        function (e) {
+        function(e) {
 	    game.controller._keysDown[e.keyCode] = true;
         });
 
     addEventListener(
         "keyup",
-        function (e) {
+        function(e) {
 	    delete game.controller._keysDown[e.keyCode];
         });
 
