@@ -168,17 +168,7 @@ game.view.update = function(grid, activePiece) {
 game.controller.init = function(canvas) {
     this._canvas = canvas;
     this._keysDown = {};
-/*
-    addEventListener(
-        'mousedown',
-        function (e) {
-            e.preventDefault();
-            var rect = game.controller._canvas.getBoundingClientRect();
-            if (e.pageX > rect.right && e.pageY > rect.top && e.pageY < rect.bottom) {
-                game.controller._keysDown[util.action.right] = true;
-            }
-        });
-*/
+
     addEventListener(
         "keydown",
         function (e) {

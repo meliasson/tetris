@@ -1,12 +1,16 @@
-%canvas{:id => "game", :width => "200", :height => "400", :class => "screen"}
+%canvas{:id => "game", :class => "screen",  :width => "200", :height => "400"}
 
-%ul{:id => "menu", :class => "large-text screen"}
-  %li{:id => "menu-game-over"} Game over
-  %li{:id => "menu-resume-game", :class => "clickable"} Resume game
-  %li{:id => "menu-new-game", :class => "clickable"} New game
-  %li{:id => "menu-high-scores", :class => "clickable"} High scores
+%div{:id => "menu", :class => "screen"}
+  %h1 Le Tetris
+  %ul{:class => "large-text"}
+    %li{:id => "menu-game-over"} Game over
+    %li{:id => "menu-resume-game", :class => "clickable"} Resume game
+    %li{:id => "menu-new-game", :class => "clickable"} New game
+    %li{:id => "menu-high-scores", :class => "clickable"} High scores
 
-%div{:id => "high-scores", :class => "large-text screen"}
+%div{:id => "high-scores", :class => "screen"}
+  %h1 Le Tetris
+  %div{:class => "large-text"}
   %table
     %tr
       %th Rank

@@ -118,7 +118,7 @@ screenmanager.gameOver = function() {
 }
 
 screenmanager._activateGameScreen = function() {
-    var canvas = document.getElementById(this._game);
+    var canvas = document.getElementById('game');
     canvas.style.display = 'inline';
     game.run(canvas, this._gameState);
 }
