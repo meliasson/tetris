@@ -184,7 +184,6 @@ game.controller.init = function(canvas) {
     addEventListener(
         'touchstart',
         function(e) {
-            //e.preventDefault();
             var x = e.touches[0].pageX;
             var y = e.touches[0].pageY;
             var rect = game.controller._canvas.getBoundingClientRect();
@@ -201,15 +200,6 @@ game.controller.init = function(canvas) {
                 game.controller._keysDown[util.action.drop] = true;
             }
         });
-/*
-    window.addEventListener('touchmove', function(e) {
-        e.preventDefault();
-    }, false);
-
-    window.addEventListener('touchend', function(e) {
-        e.preventDefault();
-    }, false);
-*/
 }
 
 game.controller.update = function() {
