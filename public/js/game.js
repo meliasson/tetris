@@ -1,12 +1,11 @@
 /* NAMESPACE */
 
 var game = {
-    model: {},
     view: {},
     controller: {}
 };
 
-/* game */
+/* GAME */
 
 game.run = function(canvas, state) {
     if (state == util.gameState.none || state == util.gameState.over) {
@@ -17,7 +16,7 @@ game.run = function(canvas, state) {
 };
 
 game._init = function(canvas) {
-    game.model.init();
+    letetris.model.init();
     game.view.init(canvas);
     game.controller.init(canvas);
 };
@@ -28,114 +27,6 @@ game._step = function() {
         util.requestAnimationFrame.call(window, game._step);
     }
 };
-
-/* MODEL */
-
-game.model.init = function() {
-    this._grid = this._initGrid();
-    this._activePiece = { cell: [0, 4] };
-    this._speed = { current: 0.6, decrement: 0.005, min: 0.1 };
-    this._lastTick = new Date().getTime();
-};
-
-game.model.update = function(actions) {
-    if (this._applyGravity() === false) {
-        return false;
-    }
-
-    //
-    // Apply user input
-    //
-
-    if (actions[util.action.rotate]) {
-	// TODO: Rotate active piece.
-    }
-
-    if (actions[util.action.left]) {
-        delete actions[util.action.left];
-        if (this._activePiece.cell[1] > 0 && this._grid[this._activePiece.cell[0]][this._activePiece.cell[1] - 1] === false) {
-            this._activePiece.cell[1] -= 1;
-        }
-    }
-
-    if (actions[util.action.right]) {
-        delete actions[util.action.right];
-        if (this._activePiece.cell[1] < 10 && this._grid[this._activePiece.cell[0]][this._activePiece.cell[1] + 1] === false) {
-            this._activePiece.cell[1] += 1;
-        }
-    }
-
-    if (actions[util.action.drop]) {
-        delete actions[util.action.drop];
-        while (this._pieceCanFall()) {
-            this._activePiece.cell[0] += 1;
-        }
-
-        // Make piece stay where it landed by forcing new tick.
-        this._lastTick = 0;
-    }
-
-    // Update view
-    game.view.update(this._grid, this._activePiece);
-
-    return true;
-};
-
-game.model._applyGravity = function() {
-    if (this._pieceShouldFall()) {
-        if (this._pieceCanFall()) {
-            this._activePiece.cell[0] += 1;
-        }
-        else {
-            this._grid[this._activePiece.cell[0]][this._activePiece.cell[1]] = true;
-
-            if (this._grid[0][4] == true) {
-                return false;
-            }
-
-            this._activePiece = {
-                cell: [0, 4]
-            };
-        }
-    }
-
-    return true;
-}
-
-game.model._pieceShouldFall = function() {
-    var now = new Date().getTime();
-
-    if ((now - this._lastTick) / 1000 >= this._speed.current) {
-        this._lastTick = now;
-        return true;
-    }
-    else {
-        return false;
-    }
-};
-
-game.model._initGrid = function() {
-    var grid = [];
-
-    for (var row = 0; row < util.grid.nrOfRows; row++) {
-        grid[row] = [];
-        for (var col = 0; col < util.grid.nrOfColumns; col++) {
-            grid[row][col] = false;
-        }
-    }
-
-    return grid;
-}
-
-game.model._pieceCanFall = function() {
-    if (this._activePiece.cell[0] < 19) {
-        if (this._grid[this._activePiece.cell[0] + 1][this._activePiece.cell[1]] === false) {
-            return true;
-        }
-    }
-
-    return false;
-}
 
 /* VIEW */
 
@@ -148,8 +39,8 @@ game.view.init = function(canvas) {
 
 game.view.update = function(grid, activePiece) {
     // clear canvas
-    for (var row = 0; row < 20; row++) {
-        for (var col = 0; col < 10; col++) {
+    for (var row = 0; row < util.grid.nrOfRows; row++) {
+        for (var col = 0; col < util.grid.nrOfColumns; col++) {
             if (grid[row][col] === false) {
                 this._context.clearRect(col * 20, row * 20, 20, 20);
             }
@@ -157,11 +48,19 @@ game.view.update = function(grid, activePiece) {
     }
 
     // draw active piece
-    this._context.fillRect(
-        activePiece.cell[1] * 20,
-        activePiece.cell[0] * 20,
-        20,
-        20);
+    var rotation = activePiece.rotation;
+    var position = activePiece.position;
+    for (var row = 0; row < rotation.length; row++) {
+        for (var col = 0; col < rotation[0].length; col++) {
+            if (rotation[row][col] === true) {
+                this._context.fillRect(
+                    (position.column + col) * util.grid.cellSize,
+                    (position.row + row) * util.grid.cellSize,
+                    util.grid.cellSize,
+                    util.grid.cellSize);
+            }
+        }
+    }
 
     // draw inactive pieces
     for (var row = 0; row < 20; row++) {
@@ -210,7 +109,7 @@ game.controller.init = function(canvas) {
                 game.controller._keysDown[util.action.drop] = true;
             }
         });
-}
+};
 
 game.controller.update = function() {
     if (this._keysDown[util.action.pause]) {
@@ -218,10 +117,10 @@ game.controller.update = function() {
         return false;
     }
 
-    if (game.model.update(this._keysDown) === false) {
+    if (letetris.model.update(this._keysDown) === false) {
         screenmanager.gameOver();
         return false;
     }
 
     return true;
-}
+};
