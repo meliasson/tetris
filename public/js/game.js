@@ -95,18 +95,26 @@ game.controller.init = function(canvas) {
         function(e) {
             var x = e.touches[0].pageX;
             var y = e.touches[0].pageY;
-            var rect = game.controller._canvas.getBoundingClientRect();
+            var grid = game.controller._canvas.getBoundingClientRect();
+            var top = grid.top;
+            var bottom = grid.bottom;
+            var left = grid.left;
+            var right = grid.right;
 
-            if (x < rect.left && y > rect.top && y < rect.bottom) {
+            if (x < left && y > top && y < bottom) {
                 game.controller._keysDown[util.action.left] = true;
             }
 
-            if (x > rect.right && y > rect.top && y < rect.bottom) {
+            if (x > right && y > top && y < bottom) {
                 game.controller._keysDown[util.action.right] = true;
             }
 
-            if (x > rect.left && x < rect.right && y > rect.bottom) {
+            if (x > left && x < right && y > bottom) {
                 game.controller._keysDown[util.action.drop] = true;
+            }
+
+            if (x > left && x < right && y > top && y < bottom) {
+                game.controller._keysDown[util.action.rotate] = true;
             }
         });
 };

@@ -140,7 +140,7 @@ letetris.model._rotatePiece = function() {
             if (piece[row][col]) {
                 // TODO: create _cellAvailable(cell) which calls methods
                 // _cellOutsideGrid and _cellOccupied instead of the if
-                // statements below.
+                // statements below. _cellOutsideGrid needs to consider rows as well as columns?
 
                 if (offset.column + col < 0 || offset.column + col > util.grid.nrOfColumns - 1) {
                     validMove = false;
