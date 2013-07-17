@@ -6,7 +6,7 @@ letetris.model = {};
 letetris.model.init = function() {
     this._grid = this._initGrid();
     this._activePiece = this._spawnPiece();
-    this._speed = { current: 0.6, decrement: 0.005, min: 0.1 };
+    this._tickSpeed = { current: 0.6, decrement: 0.005, min: 0.1 };
     this._lastTick = new Date().getTime();
 };
 
@@ -61,7 +61,7 @@ letetris.model._applyGravity = function() {
 // Returns true if gravity should act, false otherwise.
 letetris.model._gravityShouldAct = function() {
     var now = new Date().getTime();
-    if ((now - this._lastTick) / 1000 >= this._speed.current) {
+    if ((now - this._lastTick) / 1000 >= this._tickSpeed.current) {
         this._lastTick = now;
         return true;
     }
@@ -82,25 +82,61 @@ letetris.model._freezePiece = function() {
 };
 
 letetris.model._removeFilledRows = function() {
-    for (var row = 0; row < this._grid.length; row++) {
-        var rowCleared = true;
-        for (var col = 0; col < this._grid[0].length; col++) {
-            if (this._grid[row][col]) {
-                rowCleared = false;
-            }
-        }
-
-        if (rowCleared) {
-            // remove row ...
+    for (var row = 0; row < util.grid.nrOfRows; row++) {
+        if (this._isRowFilled(row)) {
+            this._moveAllRowsAboveDownOneRow(row);
+            this._clearTopRow();
         }
     }
 };
 
+letetris.model._isRowFilled = function(row) {
+    var rowFilled = true;
+    for (var col = 0; col < util.grid.nrOfColumns; col++) {
+        if (!this._grid[row][col]) {
+            rowFilled = false;
+        }
+    }
+
+    return rowFilled;
+};
+
+letetris.model._moveAllRowsAboveDownOneRow = function(row) {
+    for (var rowAbove = row; rowAbove > 0; rowAbove--) {
+        for (var col = 0; col < util.grid.nrOfColumns; col++) {
+            this._grid[rowAbove][col] = this._grid[rowAbove - 1][col];
+        }
+    }
+};
+
+letetris.model._clearTopRow = function() {
+    for (var col = 0; col < util.grid.nrOfColumns; col++) {
+        this._grid[0][col] = false;
+    }
+}
+
 letetris.model._spawnSubsequentPiece = function() {
     this._activePiece = this._spawnPiece();
 
-    // TODO: Return false if spawned piece collides.
-    return true;
+    var piece = this._activePiece.rotation;
+    var offset = this._activePiece.position;
+    var validSpawn = true;
+    for (var row = 0; row < piece.length; row++) {
+        for (var col = 0; col < piece[0].length; col++) {
+            if (piece[row][col]) {
+                var cell = {
+                    row: offset.row + row,
+                    column: offset.column + col
+                };
+
+                if (!this._cellAvailable(cell)) {
+                    validSpawn = false;
+                }
+            }
+        }
+    }
+
+    return validSpawn;
 };
 
 /* USER INPUT */
@@ -138,15 +174,12 @@ letetris.model._rotatePiece = function() {
     for (var row = 0; row < piece.length; row++) {
         for (var col = 0; col < piece[0].length; col++) {
             if (piece[row][col]) {
-                // TODO: create _cellAvailable(cell) which calls methods
-                // _cellOutsideGrid and _cellOccupied instead of the if
-                // statements below. _cellOutsideGrid needs to consider rows as well as columns?
+                var cell = {
+                    row: offset.row + row,
+                    column: offset.column + col
+                };
 
-                if (offset.column + col < 0 || offset.column + col > util.grid.nrOfColumns - 1) {
-                    validMove = false;
-                }
-
-                if (this._grid[offset.row + row][offset.col + col]) {
+                if (!this._cellAvailable(cell)) {
                     validMove = false;
                 }
             }
@@ -244,6 +277,20 @@ letetris.model._movePieceRight = function() {
         this._activePiece.position.column += 1;
     }
 }
+
+letetris.model._cellAvailable = function(cell) {
+    return !(this._cellOutsideGrid(cell) || this._cellOccupied(cell));
+};
+
+letetris.model._cellOutsideGrid = function(cell) {
+    var row = cell.row < 0 || cell.row > util.grid.nrOfRows - 1;
+    var col = cell.column < 0 || cell.column > util.grid.nrOfColumns - 1;
+    return col || row;
+};
+
+letetris.model._cellOccupied = function(cell) {
+    return this._grid[cell.row][cell.column];
+};
 
 letetris.model._cellBelowIsAvailable = function(cell) {
     return !(this._lastRowReached(cell.row) || this._cellBelowIsOccupied(cell));
