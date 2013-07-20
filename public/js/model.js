@@ -75,7 +75,7 @@ letetris.model._freezePiece = function() {
     for (var row = 0; row < piece.length; row++) {
         for (var col = 0; col < piece[0].length; col++) {
             if (piece[row][col]) {
-                this._grid[offset.row + row][offset.column + col] = true;
+                this._grid[offset.row + row][offset.column + col] = piece[row][col];
             }
         }
     }
@@ -282,6 +282,21 @@ letetris.model._cellAvailable = function(cell) {
     return !(this._cellOutsideGrid(cell) || this._cellOccupied(cell));
 };
 
+letetris.model._cellBelowIsAvailable = function(cell) {
+    var cellBelow = { row: cell.row + 1, column: cell.column };
+    return this._cellAvailable(cellBelow);
+};
+
+letetris.model._cellToLeftIsAvailable = function(cell) {
+    var cellToLeft = { row: cell.row, column: cell.column - 1 };
+    return this._cellAvailable(cellToLeft);
+};
+
+letetris.model._cellToRightIsAvailable = function(cell) {
+    var cellToRight = { row: cell.row, column: cell.column + 1 };
+    return this._cellAvailable(cellToRight);
+};
+
 letetris.model._cellOutsideGrid = function(cell) {
     var row = cell.row < 0 || cell.row > util.grid.nrOfRows - 1;
     var col = cell.column < 0 || cell.column > util.grid.nrOfColumns - 1;
@@ -292,66 +307,31 @@ letetris.model._cellOccupied = function(cell) {
     return this._grid[cell.row][cell.column];
 };
 
-letetris.model._cellBelowIsAvailable = function(cell) {
-    return !(this._lastRowReached(cell.row) || this._cellBelowIsOccupied(cell));
-};
-
-letetris.model._cellToLeftIsAvailable = function(cell) {
-    return !(this._firstColumnReached(cell.column) || this._cellToLeftIsOccupied(cell));
-};
-
-letetris.model._cellToRightIsAvailable = function(cell) {
-    return !(this._lastColumnReached(cell.column) || this._cellToRightIsOccupied(cell));
-};
-
-letetris.model._lastRowReached = function(row) {
-    return row === util.grid.nrOfRows - 1;
-};
-
-letetris.model._firstColumnReached = function(column) {
-    return column == 0;
-};
-
-letetris.model._lastColumnReached = function(column) {
-    return column == util.grid.nrOfColumns - 1;
-};
-
-letetris.model._cellBelowIsOccupied = function(cell) {
-    return this._grid[cell.row + 1][cell.column];
-};
-
-letetris.model._cellToLeftIsOccupied = function(cell) {
-    return this._grid[cell.row][cell.column - 1];
-};
-
-letetris.model._cellToRightIsOccupied = function(cell) {
-    return this._grid[cell.row][cell.column + 1];
-};
-
 /* J PIECE */
 
 letetris.model.JPiece = function(position) {
+    this._id = util.piece.jPiece;
     this.position = position;
     this._rotations = [
-        [[true,  false, false, false],
-         [true,  true,  true,  false],
-         [false, false, false, false],
-         [false, false, false, false]],
+        [[util.piece.jPiece, 0, 0, 0],
+         [util.piece.jPiece, util.piece.jPiece, util.piece.jPiece, 0],
+         [0, 0, 0, 0],
+         [0, 0, 0, 0]],
 
-        [[false, true,  true,  false],
-         [false, true,  false, false],
-         [false, true,  false, false],
-         [false, false, false, false]],
+        [[0, util.piece.jPiece, util.piece.jPiece, 0],
+         [0, util.piece.jPiece, 0, 0],
+         [0, util.piece.jPiece, 0, 0],
+         [0, 0, 0, 0]],
 
-        [[false, false, false, false],
-         [true,  true,  true,  false],
-         [false, false, true,  false],
-         [false, false, false, false]],
+        [[0, 0, 0, 0],
+         [util.piece.jPiece, util.piece.jPiece, util.piece.jPiece, 0],
+         [0, 0, util.piece.jPiece, 0],
+         [0, 0, 0, 0]],
 
-        [[false, true,  false, false],
-         [false, true,  false, false],
-         [true,  true,  false, false],
-         [false, false, false, false]]
+        [[0, util.piece.jPiece, 0, 0],
+         [0, util.piece.jPiece, 0, 0],
+         [util.piece.jPiece, util.piece.jPiece, 0, 0],
+         [0, 0, 0, 0]]
     ];
 };
 

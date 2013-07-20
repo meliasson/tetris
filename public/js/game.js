@@ -41,7 +41,7 @@ game.view.update = function(grid, activePiece) {
     // clear canvas
     for (var row = 0; row < util.grid.nrOfRows; row++) {
         for (var col = 0; col < util.grid.nrOfColumns; col++) {
-            if (grid[row][col] === false) {
+            if (!grid[row][col]) {
                 this._context.clearRect(col * 20, row * 20, 20, 20);
             }
         }
@@ -52,12 +52,14 @@ game.view.update = function(grid, activePiece) {
     var position = activePiece.position;
     for (var row = 0; row < rotation.length; row++) {
         for (var col = 0; col < rotation[0].length; col++) {
-            if (rotation[row][col] === true) {
-                this._context.fillRect(
-                    (position.column + col) * util.grid.cellSize,
-                    (position.row + row) * util.grid.cellSize,
-                    util.grid.cellSize,
-                    util.grid.cellSize);
+            if (rotation[row][col]) {
+                var pieceId = rotation[row][col];
+                var cell = {
+                    row: position.row + row,
+                    column: position.column + col
+                }
+
+                this._fillCell(cell, pieceId);
             }
         }
     }
@@ -65,12 +67,36 @@ game.view.update = function(grid, activePiece) {
     // draw inactive pieces
     for (var row = 0; row < 20; row++) {
         for (var col = 0; col < 10; col++) {
-            if (grid[row][col] === true) {
-                this._context.fillRect(col * 20, row * 20, 20, 20);
+            if (grid[row][col]) {
+                var pieceId = grid[row][col];
+                var cell = {
+                    row: row,
+                    column: col
+                }
+
+                this._fillCell(cell, pieceId);
             }
         }
     }
 };
+
+game.view._fillCell = function(cell, pieceId) {
+    switch (pieceId)
+    {
+    case util.piece.jPiece:
+        this._context.fillStyle = '#ECD078';
+        break;
+    default:
+        this._context.fillStyle = '#C02942';
+        break;
+    }
+
+    this._context.fillRect(
+        cell.column * util.grid.cellSize,
+        cell.row * util.grid.cellSize,
+        util.grid.cellSize,
+        util.grid.cellSize);
+}
 
 /* CONTROLLER */
 
