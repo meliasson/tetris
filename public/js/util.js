@@ -13,6 +13,21 @@ util.randomInt = function(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
+util.shuffleArray = function(array) {
+    var counter = array.length;
+    var temp;
+    var index;
+
+    while (counter > 0) {
+        index = (Math.random() * counter--) | 0;
+        temp = array[counter];
+        array[counter] = array[index];
+        array[index] = temp;
+    }
+
+    return array;
+};
+
 util.action = {
     left: 37,
     right: 39,
@@ -22,9 +37,11 @@ util.action = {
 };
 
 util.grid = {
+    cellSize: 20,
     nrOfRows: 20,
     nrOfColumns: 10,
-    cellSize: 20
+    initialPiecePositionRow: 0,
+    initialPiecePositionColumn: 3
 };
 
 util.gameState = {
@@ -34,5 +51,6 @@ util.gameState = {
 };
 
 util.piece = {
-    jPiece: 1
+    jPiece: 1,
+    lPiece: 2
 };

@@ -86,6 +86,8 @@ game.view._fillCell = function(cell, pieceId) {
     case util.piece.jPiece:
         this._context.fillStyle = '#ECD078';
         break;
+    case util.piece.lPiece:
+        this._context.fillStyle = '#C02942';
     default:
         this._context.fillStyle = '#C02942';
         break;

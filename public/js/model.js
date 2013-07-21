@@ -5,6 +5,7 @@ letetris.model = {};
 
 letetris.model.init = function() {
     this._grid = this._initGrid();
+    this._pieceBag = this._createPieceBag();
     this._activePiece = this._spawnPiece();
     this._tickSpeed = { current: 0.6, decrement: 0.005, min: 0.1 };
     this._lastTick = new Date().getTime();
@@ -23,7 +24,6 @@ letetris.model.update = function(actions) {
 
 letetris.model._initGrid = function() {
     var grid = [];
-
     for (var row = 0; row < util.grid.nrOfRows; row++) {
         grid[row] = [];
         for (var col = 0; col < util.grid.nrOfColumns; col++) {
@@ -33,12 +33,6 @@ letetris.model._initGrid = function() {
 
     return grid;
 };
-
-/* SHARED */
-
-letetris.model._spawnPiece = function() {
-    return new letetris.model.JPiece({ row: 0, column: 3 });
-}
 
 /* GRAVITY */
 
@@ -69,6 +63,8 @@ letetris.model._gravityShouldAct = function() {
     return false;
 };
 
+// Makes the active piece a static part of the grid.
+// Returns undefined.
 letetris.model._freezePiece = function() {
     var piece = this._activePiece.rotation;
     var offset = this._activePiece.position;
@@ -81,6 +77,9 @@ letetris.model._freezePiece = function() {
     }
 };
 
+// Removes all filled rows. For each removed row, all rows above are moved down
+// one row.
+// Returns undefined.
 letetris.model._removeFilledRows = function() {
     for (var row = 0; row < util.grid.nrOfRows; row++) {
         if (this._isRowFilled(row)) {
@@ -90,6 +89,8 @@ letetris.model._removeFilledRows = function() {
     }
 };
 
+// Determines if row passed as argument is filled.
+// Returns true if row is filled, false otherwise.
 letetris.model._isRowFilled = function(row) {
     var rowFilled = true;
     for (var col = 0; col < util.grid.nrOfColumns; col++) {
@@ -101,6 +102,8 @@ letetris.model._isRowFilled = function(row) {
     return rowFilled;
 };
 
+// Moves all rows above row passed as argument down one row.
+// Returns undefined.
 letetris.model._moveAllRowsAboveDownOneRow = function(row) {
     for (var rowAbove = row; rowAbove > 0; rowAbove--) {
         for (var col = 0; col < util.grid.nrOfColumns; col++) {
@@ -109,35 +112,13 @@ letetris.model._moveAllRowsAboveDownOneRow = function(row) {
     }
 };
 
+// Empties the first row.
+// Returns undefined.
 letetris.model._clearTopRow = function() {
     for (var col = 0; col < util.grid.nrOfColumns; col++) {
         this._grid[0][col] = false;
     }
 }
-
-letetris.model._spawnSubsequentPiece = function() {
-    this._activePiece = this._spawnPiece();
-
-    var piece = this._activePiece.rotation;
-    var offset = this._activePiece.position;
-    var validSpawn = true;
-    for (var row = 0; row < piece.length; row++) {
-        for (var col = 0; col < piece[0].length; col++) {
-            if (piece[row][col]) {
-                var cell = {
-                    row: offset.row + row,
-                    column: offset.column + col
-                };
-
-                if (!this._cellAvailable(cell)) {
-                    validSpawn = false;
-                }
-            }
-        }
-    }
-
-    return validSpawn;
-};
 
 /* USER INPUT */
 
@@ -307,35 +288,130 @@ letetris.model._cellOccupied = function(cell) {
     return this._grid[cell.row][cell.column];
 };
 
-/* J PIECE */
+/* PIECE CREATION */
 
-letetris.model.JPiece = function(position) {
+letetris.model._createPieceBag = function() {
+    var pieceBag = [];
+
+    for (var i = 0; i < 4; i++) {
+        pieceBag.push(new letetris.model.JPiece());
+    }
+
+    for (var i = 0; i < 4; i++) {
+        pieceBag.push(new letetris.model.LPiece());
+    }
+
+    return util.shuffleArray(pieceBag);
+};
+
+letetris.model._spawnPiece = function() {
+    if (!this._pieceBag.length) {
+        this._pieceBag = this._createPieceBag();
+    }
+
+    return this._pieceBag.pop();
+};
+
+// Creates a new active piece.
+// Returns true if created piece doesn't collide with occupied grid cells,
+// false otherwise.
+letetris.model._spawnSubsequentPiece = function() {
+    this._activePiece = this._spawnPiece();
+
+    var piece = this._activePiece.rotation;
+    var offset = this._activePiece.position;
+    var validSpawn = true;
+    for (var row = 0; row < piece.length; row++) {
+        for (var col = 0; col < piece[0].length; col++) {
+            if (piece[row][col]) {
+                var cell = {
+                    row: offset.row + row,
+                    column: offset.column + col
+                };
+
+                if (!this._cellAvailable(cell)) {
+                    validSpawn = false;
+                }
+            }
+        }
+    }
+
+    return validSpawn;
+};
+
+/* PIECE DEFINITIONS */
+
+letetris.model.JPiece = function() {
+    this.position = {
+        row: util.grid.initialPiecePositionRow,
+        column: util.grid.initialPiecePositionColumn };
     this._id = util.piece.jPiece;
-    this.position = position;
     this._rotations = [
-        [[util.piece.jPiece, 0, 0, 0],
-         [util.piece.jPiece, util.piece.jPiece, util.piece.jPiece, 0],
+        [[this._id, 0, 0, 0],
+         [this._id, this._id, this._id, 0],
          [0, 0, 0, 0],
          [0, 0, 0, 0]],
 
-        [[0, util.piece.jPiece, util.piece.jPiece, 0],
-         [0, util.piece.jPiece, 0, 0],
-         [0, util.piece.jPiece, 0, 0],
+        [[0, this._id, this._id, 0],
+         [0, this._id, 0, 0],
+         [0, this._id, 0, 0],
          [0, 0, 0, 0]],
 
         [[0, 0, 0, 0],
-         [util.piece.jPiece, util.piece.jPiece, util.piece.jPiece, 0],
-         [0, 0, util.piece.jPiece, 0],
+         [this._id, this._id, this._id, 0],
+         [0, 0, this._id, 0],
          [0, 0, 0, 0]],
 
-        [[0, util.piece.jPiece, 0, 0],
-         [0, util.piece.jPiece, 0, 0],
-         [util.piece.jPiece, util.piece.jPiece, 0, 0],
+        [[0, this._id, 0, 0],
+         [0, this._id, 0, 0],
+         [this._id, this._id, 0, 0],
          [0, 0, 0, 0]]
     ];
 };
 
 letetris.model.JPiece.prototype = {
+    get rotation() {
+        return this._rotations[0];
+    },
+
+    toNextRotation: function() {
+        this._rotations.push(this._rotations.shift());
+    },
+
+    toPreviousRotation: function() {
+        this._rotations.unshift(this._rotations.pop());
+    }
+};
+
+letetris.model.LPiece = function() {
+    this.position = {
+        row: util.grid.initialPiecePositionRow,
+        column: util.grid.initialPiecePositionColumn };
+    this._id = util.piece.lPiece;
+    this._rotations = [
+        [[0, 0, this._id, 0],
+         [this._id, this._id, this._id, 0],
+         [0, 0, 0, 0],
+         [0, 0, 0, 0]],
+
+        [[0, this._id, this._id, 0],
+         [0, 0, this._id, 0],
+         [0, 0, this._id, 0],
+         [0, 0, 0, 0]],
+
+        [[0, 0, 0, 0],
+         [this._id, this._id, this._id, 0],
+         [this._id, 0, 0, 0],
+         [0, 0, 0, 0]],
+
+        [[this._id, 0, 0, 0],
+         [this._id, 0, 0, 0],
+         [this._id, this._id, 0, 0],
+         [0, 0, 0, 0]]
+    ];
+};
+
+letetris.model.LPiece.prototype = {
     get rotation() {
         return this._rotations[0];
     },
