@@ -49,9 +49,3 @@ util.gameState = {
     paused: 1,
     over: 2
 };
-
-util.piece = {
-    jPiece: 1,
-    lPiece: 2,
-    iPiece: 3
-};

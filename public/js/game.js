@@ -83,14 +83,17 @@ game.view.update = function(grid, activePiece) {
 game.view._fillCell = function(cell, pieceId) {
     switch (pieceId)
     {
-    case util.piece.jPiece:
+    case letetris.model.piecedefinitions.pieceId.jPiece:
         this._context.fillStyle = '#ECD078';
         break;
-    case util.piece.lPiece:
+    case letetris.model.piecedefinitions.pieceId.lPiece:
         this._context.fillStyle = '#C02942';
         break;
-    case util.piece.iPiece:
+    case letetris.model.piecedefinitions.pieceId.iPiece:
         this._context.fillStyle = '#D95B43';
+        break;
+    case letetris.model.piecedefinitions.pieceId.oPiece:
+        this._context.fillStyle = '#542437';
         break;
     default:
         this._context.fillStyle = '#C02942';
