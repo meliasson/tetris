@@ -52,5 +52,6 @@ util.gameState = {
 
 util.piece = {
     jPiece: 1,
-    lPiece: 2
+    lPiece: 2,
+    iPiece: 3
 };

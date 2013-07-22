@@ -301,6 +301,10 @@ letetris.model._createPieceBag = function() {
         pieceBag.push(new letetris.model.LPiece());
     }
 
+    for (var i = 0; i < 4; i++) {
+        pieceBag.push(new letetris.model.IPiece());
+    }
+
     return util.shuffleArray(pieceBag);
 };
 
@@ -412,6 +416,38 @@ letetris.model.LPiece = function() {
 };
 
 letetris.model.LPiece.prototype = {
+    get rotation() {
+        return this._rotations[0];
+    },
+
+    toNextRotation: function() {
+        this._rotations.push(this._rotations.shift());
+    },
+
+    toPreviousRotation: function() {
+        this._rotations.unshift(this._rotations.pop());
+    }
+};
+
+letetris.model.IPiece = function() {
+    this.position = {
+        row: util.grid.initialPiecePositionRow,
+        column: util.grid.initialPiecePositionColumn };
+    this._id = util.piece.iPiece;
+    this._rotations = [
+        [[this._id, this._id, this._id, this._id],
+         [0, 0, 0, 0],
+         [0, 0, 0, 0],
+         [0, 0, 0, 0]],
+
+        [[0, this._id, 0, 0],
+         [0, this._id, 0, 0],
+         [0, this._id, 0, 0],
+         [0, this._id, 0, 0]]
+    ];
+};
+
+letetris.model.IPiece.prototype = {
     get rotation() {
         return this._rotations[0];
     },
