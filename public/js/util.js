@@ -36,14 +36,6 @@ util.action = {
     pause: 27
 };
 
-util.grid = {
-    cellSize: 20,
-    nrOfRows: 20,
-    nrOfColumns: 10,
-    initialPiecePositionRow: 0,
-    initialPiecePositionColumn: 3
-};
-
 util.gameState = {
     none: 0,
     paused: 1,

@@ -32,6 +32,7 @@ game._step = function() {
 
 game.view.init = function(canvas) {
     this._canvas = canvas;
+    this._cellSize = 20;
     this._context = canvas.getContext("2d");
     this._context.fillStyle = '#DDDDDD';
     this._context.clearRect(0, 0, canvas.width, canvas.height);
@@ -39,10 +40,14 @@ game.view.init = function(canvas) {
 
 game.view.update = function(grid, activePiece) {
     // clear canvas
-    for (var row = 0; row < util.grid.nrOfRows; row++) {
-        for (var col = 0; col < util.grid.nrOfColumns; col++) {
+    for (var row = 0; row < letetris.model.grid.def.nrOfRows; row++) {
+        for (var col = 0; col < letetris.model.grid.def.nrOfCols; col++) {
             if (!grid[row][col]) {
-                this._context.clearRect(col * 20, row * 20, 20, 20);
+                this._context.clearRect(
+                    col * this._cellSize,
+                    row * this._cellSize,
+                    this._cellSize,
+                    this._cellSize);
             }
         }
     }
@@ -56,7 +61,7 @@ game.view.update = function(grid, activePiece) {
                 var pieceId = rotation[row][col];
                 var cell = {
                     row: position.row + row,
-                    column: position.column + col
+                    col: position.col + col
                 }
 
                 this._fillCell(cell, pieceId);
@@ -64,14 +69,14 @@ game.view.update = function(grid, activePiece) {
         }
     }
 
-    // draw inactive pieces
-    for (var row = 0; row < 20; row++) {
-        for (var col = 0; col < 10; col++) {
+    // draw filled cells
+    for (var row = 0; row < letetris.model.grid.def.nrOfRows; row++) {
+        for (var col = 0; col < letetris.model.grid.def.nrOfCols; col++) {
             if (grid[row][col]) {
                 var pieceId = grid[row][col];
                 var cell = {
                     row: row,
-                    column: col
+                    col: col
                 }
 
                 this._fillCell(cell, pieceId);
@@ -83,17 +88,23 @@ game.view.update = function(grid, activePiece) {
 game.view._fillCell = function(cell, pieceId) {
     switch (pieceId)
     {
-    case letetris.model.piecedefinitions.pieceId.jPiece:
+    case letetris.model.pieceDef.pieceId.jPiece:
         this._context.fillStyle = '#ECD078';
         break;
-    case letetris.model.piecedefinitions.pieceId.lPiece:
+    case letetris.model.pieceDef.pieceId.lPiece:
         this._context.fillStyle = '#C02942';
         break;
-    case letetris.model.piecedefinitions.pieceId.iPiece:
+    case letetris.model.pieceDef.pieceId.iPiece:
         this._context.fillStyle = '#D95B43';
         break;
-    case letetris.model.piecedefinitions.pieceId.oPiece:
+    case letetris.model.pieceDef.pieceId.oPiece:
         this._context.fillStyle = '#542437';
+        break;
+    case letetris.model.pieceDef.pieceId.sPiece:
+        this._context.fillStyle = '#7894EC';
+        break;
+    case letetris.model.pieceDef.pieceId.zPiece:
+        this._context.fillStyle = '#53777A';
         break;
     default:
         this._context.fillStyle = '#C02942';
@@ -101,10 +112,10 @@ game.view._fillCell = function(cell, pieceId) {
     }
 
     this._context.fillRect(
-        cell.column * util.grid.cellSize,
-        cell.row * util.grid.cellSize,
-        util.grid.cellSize,
-        util.grid.cellSize);
+        cell.col * this._cellSize,
+        cell.row * this._cellSize,
+        this._cellSize,
+        this._cellSize);
 }
 
 /* CONTROLLER */
