@@ -24,7 +24,7 @@ screenmanager.initConstants = function() {
 }
 
 screenmanager.initVariables = function() {
-    this._gameState = util.gameState.none;
+    this._gameState = letetris.model.gameState.none;
 }
 
 /* MENU SCREEN */
@@ -33,13 +33,13 @@ screenmanager._initMenuScreen = function() {
     document.getElementById(this._menuNewGame).addEventListener(
         'click',
         function() {
-            screenmanager._gameState = util.gameState.none;
+            screenmanager._gameState = letetris.model.gameState.none;
             screenmanager._menuGameElementSelected();
         });
     document.getElementById(this._menuResumeGame).addEventListener(
         'click',
         function() {
-            screenmanager._gameState = util.gameState.paused;
+            screenmanager._gameState = letetris.model.gameState.paused;
             screenmanager._menuGameElementSelected();
         });
     document.getElementById(this._menuHighScores).addEventListener(
@@ -52,15 +52,15 @@ screenmanager._initMenuScreen = function() {
 screenmanager._activateMenuScreen = function() {
     document.getElementById(this._menu).style.display = 'inline-block';
 
-    if (this._gameState === util.gameState.none) {
+    if (this._gameState === letetris.model.gameState.none) {
         document.getElementById(this._menuGameOver).style.display = 'none';
         document.getElementById(this._menuResumeGame).style.display = 'none';
     }
-    else if (this._gameState === util.gameState.paused) {
+    else if (this._gameState === letetris.model.gameState.paused) {
         document.getElementById(this._menuGameOver).style.display = 'none';
         document.getElementById(this._menuResumeGame).style.display = 'inline';
     }
-    else if (this._gameState === util.gameState.over) {
+    else if (this._gameState === letetris.model.gameState.over) {
         document.getElementById(this._menuGameOver).style.display = 'inline';
         document.getElementById(this._menuResumeGame).style.display = 'none';
     }
@@ -106,13 +106,13 @@ screenmanager._highScoresMenuElementSelected = function() {
 /* GAME SCREEN */
 
 screenmanager.gamePaused = function() {
-    this._gameState = util.gameState.paused;
+    this._gameState = letetris.model.gameState.paused;
     this._deactivateGameScreen();
     this._activateMenuScreen();
 }
 
 screenmanager.gameOver = function() {
-    this._gameState = util.gameState.over;
+    this._gameState = letetris.model.gameState.over;
     this._deactivateGameScreen();
     this._activateMenuScreen();
 }

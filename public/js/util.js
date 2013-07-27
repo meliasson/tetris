@@ -35,9 +35,3 @@ util.action = {
     drop: 40,
     pause: 27
 };
-
-util.gameState = {
-    none: 0,
-    paused: 1,
-    over: 2
-};

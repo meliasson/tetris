@@ -8,7 +8,7 @@ var game = {
 /* GAME */
 
 game.run = function(canvas, state) {
-    if (state == util.gameState.none || state == util.gameState.over) {
+    if (state == letetris.model.gameState.none || state == letetris.model.gameState.over) {
         game._init(canvas);
     }
 
@@ -88,20 +88,23 @@ game.view.update = function(grid, activePiece) {
 game.view._fillCell = function(cell, pieceId) {
     switch (pieceId)
     {
+    case letetris.model.pieceDef.pieceId.iPiece:
+        this._context.fillStyle = '#D95B43';
+        break;
     case letetris.model.pieceDef.pieceId.jPiece:
         this._context.fillStyle = '#ECD078';
         break;
     case letetris.model.pieceDef.pieceId.lPiece:
         this._context.fillStyle = '#C02942';
         break;
-    case letetris.model.pieceDef.pieceId.iPiece:
-        this._context.fillStyle = '#D95B43';
-        break;
     case letetris.model.pieceDef.pieceId.oPiece:
-        this._context.fillStyle = '#542437';
+        this._context.fillStyle = '#D1F2A5';
         break;
     case letetris.model.pieceDef.pieceId.sPiece:
         this._context.fillStyle = '#7894EC';
+        break;
+    case letetris.model.pieceDef.pieceId.tPiece:
+        this._context.fillStyle = '#F56991';
         break;
     case letetris.model.pieceDef.pieceId.zPiece:
         this._context.fillStyle = '#53777A';
