@@ -5,27 +5,12 @@ var letetris = letetris || {};
 letetris.screenManager = {};
 
 letetris.screenManager.run = function() {
-    this._initConstants();
-    this._initVariables();
-
     this.menuScreen.init();
     this.gamePausedScreen.init();
     this.gameOverScreen.init();
     this.highScoresScreen.init();
 
     this.menuScreen.activate();
-};
-
-letetris.screenManager._initConstants = function() {
-    this._menu = 'menu';
-    this._menuGameOver = 'menu-game-over';
-    this._menuResumeGame = 'menu-resume-game';
-    this._menuHighScores = 'menu-high-scores';
-    this._game = 'game';
-};
-
-letetris.screenManager._initVariables = function() {
-    this._gameState = letetris.model.gameState.none;
 };
 
 /* MENU SCREEN */
@@ -36,12 +21,12 @@ letetris.screenManager.menuScreen.init = function() {
     document.getElementById('menu-new-game').addEventListener(
         'click',
         function() {
-            letetris.screenManager.menuScreen.gameElementSelected();
+            letetris.screenManager.menuScreen.startGame();
         });
     document.getElementById('menu-high-scores').addEventListener(
         'click',
         function() {
-            letetris.screenManager.menuScreen.highScoresElementSelected();
+            letetris.screenManager.menuScreen.toHighScores();
         });
 };
 
@@ -53,12 +38,12 @@ letetris.screenManager.menuScreen.deactivate = function() {
     document.getElementById('menu').style.display = 'none';
 };
 
-letetris.screenManager.menuScreen.gameElementSelected = function() {
+letetris.screenManager.menuScreen.startGame = function() {
     this.deactivate();
     letetris.screenManager.gameScreen.activate();
 };
 
-letetris.screenManager.menuScreen.highScoresElementSelected = function() {
+letetris.screenManager.menuScreen.toHighScores = function() {
     this.deactivate();
     letetris.screenManager.highScoresScreen.activate();
 };
@@ -106,7 +91,7 @@ letetris.screenManager.gameOverScreen.init = function() {
     document.getElementById('game-over-menu').addEventListener(
         'click',
         function() {
-            letetris.screenManager.gameOverScreen.menuElementSelected()
+            letetris.screenManager.gameOverScreen.toMenu()
         });
 };
 
@@ -118,7 +103,7 @@ letetris.screenManager.gameOverScreen.deactivate = function() {
     document.getElementById('game-over').style.display = 'none';
 };
 
-letetris.screenManager.gameOverScreen.menuElementSelected = function() {
+letetris.screenManager.gameOverScreen.toMenu = function() {
     this.deactivate();
     letetris.screenManager.menuScreen.activate();
 };
@@ -131,7 +116,7 @@ letetris.screenManager.highScoresScreen.init = function() {
     document.getElementById('high-scores-menu').addEventListener(
         'click',
         function() {
-            letetris.screenManager.highScoresScreen.menuElementSelected()
+            letetris.screenManager.highScoresScreen.toMenu()
         });
 };
 
@@ -143,7 +128,7 @@ letetris.screenManager.highScoresScreen.deactivate = function() {
     document.getElementById('high-scores').style.display = 'none';
 };
 
-letetris.screenManager.highScoresScreen.menuElementSelected = function() {
+letetris.screenManager.highScoresScreen.toMenu = function() {
     this.deactivate();
     letetris.screenManager.menuScreen.activate();
 };
@@ -155,7 +140,7 @@ letetris.screenManager.gameScreen = {};
 letetris.screenManager.gameScreen.activate = function() {
     var canvas = document.getElementById('game');
     canvas.style.display = 'inline';
-    letetris.game.run(canvas, this._gameState);
+    letetris.game.run(canvas);
 };
 
 letetris.screenManager.gameScreen.reactivate = function() {
