@@ -16,15 +16,14 @@ letetris.model.init = function() {
     this.grid.init();
 };
 
-letetris.model.update = function(actions) {
-    var proceed = this.gravity.giveGravityChanceToAct();
-    if (proceed) {
-        this.userinput.applyUserInput(actions);
-        game.view.update(this.grid.grid, this.grid.piece);
-        return true;
+letetris.model.update = function(input) {
+    var inputResult = this.userInput.apply(input);
+
+    if (inputResult.state == 'gamePaused') {
+        return inputResult;
     }
 
-    return false;
+    return this.gravity.giveChanceToAct();
 };
 
 /* GRID */
@@ -95,29 +94,25 @@ letetris.model.gravity.init = function() {
     this._lastTick = new Date().getTime();
 };
 
-letetris.model.gravity.giveGravityChanceToAct = function() {
-    if (this._gravityShouldAct()) {
-        if (!letetris.model.piecemovement.movePieceDown()) {
-            this._freezePiece();
-            this._removeFilledRows();
-            var spawn = letetris.model.pieceGen.spawnPiece();
-            if (spawn.validSpawn) {
-                letetris.model.grid.piece = spawn.piece;
-            }
-            else {
-                return false;
-            }
-        }
+letetris.model.gravity.giveChanceToAct = function() {
+    if (this._shouldAct()) {
+        return this._act();
+    }
+    else {
+        return {
+            state: 'gameAlive',
+            grid: letetris.model.grid.grid,
+            piece: letetris.model.grid.piece };
     }
 
     return true;
 };
 
-letetris.model.gravity.forceGravityToActOnNextChance = function() {
+letetris.model.gravity.forceActOnNextChance = function() {
     this._lastTick = 0;
 }
 
-letetris.model.gravity._gravityShouldAct = function() {
+letetris.model.gravity._shouldAct = function() {
     var now = new Date().getTime();
     var secondsElapsedSinceLastTick = (now - this._lastTick) / 1000;
     if (secondsElapsedSinceLastTick >= this._tickSpeed.current) {
@@ -126,6 +121,33 @@ letetris.model.gravity._gravityShouldAct = function() {
     }
 
     return false;
+};
+
+letetris.model.gravity._act = function() {
+    if (letetris.model.pieceMovement.movePieceDown()) {
+        return {
+            state: 'gameAlive',
+            grid: letetris.model.grid.grid,
+            piece: letetris.model.grid.piece };
+    }
+
+    this._freezePiece();
+    this._removeFilledRows();
+
+    var spawn = letetris.model.pieceGen.spawnPiece();
+    if (spawn.validSpawn) {
+        letetris.model.grid.piece = spawn.piece;
+        return {
+            state: 'gameAlive',
+            grid: letetris.model.grid.grid,
+            piece: letetris.model.grid.piece };
+    }
+    else {
+        return {
+            state: 'gameOver',
+            grid: letetris.model.grid.grid,
+            piece: letetris.model.grid.piece };
+    }
 };
 
 letetris.model.gravity._freezePiece = function() {
@@ -177,35 +199,42 @@ letetris.model.gravity._clearTopRow = function() {
 
 /* USER INPUT */
 
-letetris.model.userinput = {};
+letetris.model.userInput = {};
 
-letetris.model.userinput.applyUserInput = function(actions) {
+letetris.model.userInput.apply = function(actions) {
+    if (actions[util.action.pause]) {
+        delete actions[util.action.pause];
+        return { state: 'gamePaused' };
+    }
+
     if (actions[util.action.rotate]) {
         delete actions[util.action.rotate];
-        letetris.model.piecemovement.rotatePiece();
+        letetris.model.pieceMovement.rotatePiece();
     }
 
     if (actions[util.action.left]) {
         delete actions[util.action.left];
-        letetris.model.piecemovement.movePieceLeft();
+        letetris.model.pieceMovement.movePieceLeft();
     }
 
     if (actions[util.action.right]) {
         delete actions[util.action.right];
-        letetris.model.piecemovement.movePieceRight();
+        letetris.model.pieceMovement.movePieceRight();
     }
 
     if (actions[util.action.drop]) {
         delete actions[util.action.drop];
-        letetris.model.piecemovement.dropPiece();
+        letetris.model.pieceMovement.dropPiece();
     }
+
+    return { state: 'gameAlive' };
 };
 
 /* PIECE MOVEMENT */
 
-letetris.model.piecemovement = {};
+letetris.model.pieceMovement = {};
 
-letetris.model.piecemovement.rotatePiece = function() {
+letetris.model.pieceMovement.rotatePiece = function() {
     letetris.model.grid.piece.toNextRotation();
 
     var piece = letetris.model.grid.piece.rotation;
@@ -233,16 +262,16 @@ letetris.model.piecemovement.rotatePiece = function() {
     return validMove;
 };
 
-letetris.model.piecemovement.dropPiece = function() {
+letetris.model.pieceMovement.dropPiece = function() {
     var validMove = false;
     do {
         validMove = this.movePieceDown();
     } while (validMove)
 
-    letetris.model.gravity.forceGravityToActOnNextChance();
+    letetris.model.gravity.forceActOnNextChance();
 }
 
-letetris.model.piecemovement.movePieceDown = function() {
+letetris.model.pieceMovement.movePieceDown = function() {
     var piece = letetris.model.grid.piece.rotation;
     var offset = letetris.model.grid.piece.position;
     var validMove = true;
@@ -269,7 +298,7 @@ letetris.model.piecemovement.movePieceDown = function() {
     return validMove;
 }
 
-letetris.model.piecemovement.movePieceLeft = function() {
+letetris.model.pieceMovement.movePieceLeft = function() {
     var piece = letetris.model.grid.piece.rotation;
     var offset = letetris.model.grid.piece.position;
     var validMove = true;
@@ -296,7 +325,7 @@ letetris.model.piecemovement.movePieceLeft = function() {
     return validMove;
 }
 
-letetris.model.piecemovement.movePieceRight = function() {
+letetris.model.pieceMovement.movePieceRight = function() {
     var piece = letetris.model.grid.piece.rotation;
     var offset = letetris.model.grid.piece.position;
     var validMove = true;

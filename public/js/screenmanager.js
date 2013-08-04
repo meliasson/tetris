@@ -1,128 +1,179 @@
-/* NAMESPACE */
+var letetris = letetris || {};
 
-var screenmanager = {};
+/* ROOT */
 
-/* INIT AND RUN */
+letetris.screenManager = {};
 
-screenmanager.run = function() {
-    this.initConstants();
-    this.initVariables();
-    this._initMenuScreen();
-    this._initHighScoresScreen();
-    this._activateMenuScreen();
-}
+letetris.screenManager.run = function() {
+    this._initConstants();
+    this._initVariables();
 
-screenmanager.initConstants = function() {
+    this.menuScreen.init();
+    this.gamePausedScreen.init();
+    this.gameOverScreen.init();
+    this.highScoresScreen.init();
+
+    this.menuScreen.activate();
+};
+
+letetris.screenManager._initConstants = function() {
     this._menu = 'menu';
-    this._menuNewGame = 'menu-new-game';
     this._menuGameOver = 'menu-game-over';
     this._menuResumeGame = 'menu-resume-game';
     this._menuHighScores = 'menu-high-scores';
-    this._highScores = 'high-scores';
-    this._highScoresMenu = 'high-scores-menu';
     this._game = 'game';
-}
+};
 
-screenmanager.initVariables = function() {
+letetris.screenManager._initVariables = function() {
     this._gameState = letetris.model.gameState.none;
-}
+};
 
 /* MENU SCREEN */
 
-screenmanager._initMenuScreen = function() {
-    document.getElementById(this._menuNewGame).addEventListener(
+letetris.screenManager.menuScreen = {};
+
+letetris.screenManager.menuScreen.init = function() {
+    document.getElementById('menu-new-game').addEventListener(
         'click',
         function() {
-            screenmanager._gameState = letetris.model.gameState.none;
-            screenmanager._menuGameElementSelected();
+            letetris.screenManager.menuScreen.gameElementSelected();
         });
-    document.getElementById(this._menuResumeGame).addEventListener(
+    document.getElementById('menu-high-scores').addEventListener(
         'click',
         function() {
-            screenmanager._gameState = letetris.model.gameState.paused;
-            screenmanager._menuGameElementSelected();
+            letetris.screenManager.menuScreen.highScoresElementSelected();
         });
-    document.getElementById(this._menuHighScores).addEventListener(
+};
+
+letetris.screenManager.menuScreen.activate = function() {
+    document.getElementById('menu').style.display = 'inline-block';
+};
+
+letetris.screenManager.menuScreen.deactivate = function() {
+    document.getElementById('menu').style.display = 'none';
+};
+
+letetris.screenManager.menuScreen.gameElementSelected = function() {
+    this.deactivate();
+    letetris.screenManager.gameScreen.activate();
+};
+
+letetris.screenManager.menuScreen.highScoresElementSelected = function() {
+    this.deactivate();
+    letetris.screenManager.highScoresScreen.activate();
+};
+
+/* GAME PAUSED SCREEN */
+
+letetris.screenManager.gamePausedScreen = {};
+
+letetris.screenManager.gamePausedScreen.init = function() {
+    document.getElementById('game-paused-resume-game').addEventListener(
         'click',
         function() {
-            screenmanager._menuHighScoresElementSelected();
+            letetris.screenManager.gamePausedScreen.resumeGame();
         });
-}
+    document.getElementById('game-paused-quit-game').addEventListener(
+        'click',
+        function() {
+            letetris.screenManager.gamePausedScreen.quitGame();
+        });
+};
 
-screenmanager._activateMenuScreen = function() {
-    document.getElementById(this._menu).style.display = 'inline-block';
+letetris.screenManager.gamePausedScreen.activate = function() {
+    document.getElementById('game-paused').style.display = 'inline-block';
+};
 
-    if (this._gameState === letetris.model.gameState.none) {
-        document.getElementById(this._menuGameOver).style.display = 'none';
-        document.getElementById(this._menuResumeGame).style.display = 'none';
-    }
-    else if (this._gameState === letetris.model.gameState.paused) {
-        document.getElementById(this._menuGameOver).style.display = 'none';
-        document.getElementById(this._menuResumeGame).style.display = 'inline';
-    }
-    else if (this._gameState === letetris.model.gameState.over) {
-        document.getElementById(this._menuGameOver).style.display = 'inline';
-        document.getElementById(this._menuResumeGame).style.display = 'none';
-    }
-}
+letetris.screenManager.gamePausedScreen.deactivate = function() {
+    document.getElementById('game-paused').style.display = 'none';
+};
 
-screenmanager._deactivateMenuScreen = function() {
-    document.getElementById(this._menu).style.display = 'none';
-}
+letetris.screenManager.gamePausedScreen.resumeGame = function() {
+    this.deactivate();
+    letetris.screenManager.gameScreen.reactivate();
+};
 
-screenmanager._menuGameElementSelected = function() {
-    this._deactivateMenuScreen();
-    this._activateGameScreen();
-}
+letetris.screenManager.gamePausedScreen.quitGame = function() {
+    this.deactivate();
+    letetris.screenManager.menuScreen.activate();
+};
 
-screenmanager._menuHighScoresElementSelected = function() {
-    this._deactivateMenuScreen();
-    this._activateHighScoreScreen();
-}
+/* GAME OVER SCREEN */
+
+letetris.screenManager.gameOverScreen = {};
+
+letetris.screenManager.gameOverScreen.init = function() {
+    document.getElementById('game-over-menu').addEventListener(
+        'click',
+        function() {
+            letetris.screenManager.gameOverScreen.menuElementSelected()
+        });
+};
+
+letetris.screenManager.gameOverScreen.activate = function() {
+    document.getElementById('game-over').style.display = 'inline-block';
+};
+
+letetris.screenManager.gameOverScreen.deactivate = function() {
+    document.getElementById('game-over').style.display = 'none';
+};
+
+letetris.screenManager.gameOverScreen.menuElementSelected = function() {
+    this.deactivate();
+    letetris.screenManager.menuScreen.activate();
+};
 
 /* HIGH SCORES SCREEN */
 
-screenmanager._initHighScoresScreen = function() {
-    document.getElementById(this._highScoresMenu).addEventListener(
+letetris.screenManager.highScoresScreen = {};
+
+letetris.screenManager.highScoresScreen.init = function() {
+    document.getElementById('high-scores-menu').addEventListener(
         'click',
         function() {
-            screenmanager._highScoresMenuElementSelected()
+            letetris.screenManager.highScoresScreen.menuElementSelected()
         });
-}
+};
 
-screenmanager._activateHighScoreScreen = function() {
-    document.getElementById(this._highScores).style.display = 'inline-block';
-}
+letetris.screenManager.highScoresScreen.activate = function() {
+    document.getElementById('high-scores').style.display = 'inline-block';
+};
 
-screenmanager._deactivateHighScoreScreen = function() {
-    document.getElementById(this._highScores).style.display = 'none';
-}
+letetris.screenManager.highScoresScreen.deactivate = function() {
+    document.getElementById('high-scores').style.display = 'none';
+};
 
-screenmanager._highScoresMenuElementSelected = function() {
-    screenmanager._deactivateHighScoreScreen();
-    screenmanager._activateMenuScreen(screenmanager._gameState);
-}
+letetris.screenManager.highScoresScreen.menuElementSelected = function() {
+    this.deactivate();
+    letetris.screenManager.menuScreen.activate();
+};
 
 /* GAME SCREEN */
 
-screenmanager.gamePaused = function() {
-    this._gameState = letetris.model.gameState.paused;
-    this._deactivateGameScreen();
-    this._activateMenuScreen();
-}
+letetris.screenManager.gameScreen = {};
 
-screenmanager.gameOver = function() {
-    this._gameState = letetris.model.gameState.over;
-    this._deactivateGameScreen();
-    this._activateMenuScreen();
-}
-
-screenmanager._activateGameScreen = function() {
+letetris.screenManager.gameScreen.activate = function() {
     var canvas = document.getElementById('game');
     canvas.style.display = 'inline';
-    game.run(canvas, this._gameState);
-}
+    letetris.game.run(canvas, this._gameState);
+};
 
-screenmanager._deactivateGameScreen = function() {
-    document.getElementById(this._game).style.display = 'none';
-}
+letetris.screenManager.gameScreen.reactivate = function() {
+    var canvas = document.getElementById('game');
+    canvas.style.display = 'inline';
+    letetris.game.resume();
+};
+
+letetris.screenManager.gameScreen.deactivate = function() {
+    document.getElementById('game').style.display = 'none';
+};
+
+letetris.screenManager.gameScreen.gamePaused = function() {
+    this.deactivate();
+    letetris.screenManager.gamePausedScreen.activate();
+};
+
+letetris.screenManager.gameScreen.gameOver = function() {
+    this.deactivate();
+    letetris.screenManager.gameOverScreen.activate();
+};

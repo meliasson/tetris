@@ -1,5 +1,5 @@
 var letetris = {};
 
 letetris.run = function() {
-    screenmanager.run();
+    letetris.screenManager.run();
 }

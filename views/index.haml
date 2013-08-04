@@ -3,14 +3,34 @@
 %div{:id => "menu", :class => "screen"}
   %h1 Le Tetris
   %ul{:class => "large-text"}
-    %li{:id => "menu-game-over"} Game over
-    %li{:id => "menu-resume-game", :class => "clickable"} Resume game
     %li{:id => "menu-new-game", :class => "clickable"} New game
     %li{:id => "menu-high-scores", :class => "clickable"} High scores
 
+%div{:id => "game-paused", :class => "screen"}
+  %h1 Le Tetris
+  %ul{:class => "large-text"}
+    %li{:id => "game-paused-resume-game", :class => "clickable"} Resume game
+    %li{:id => "game-paused-quit-game", :class => "clickable"} Quit game
+
+%div{:id => "game-over", :class => "screen"}
+  %h1 Le Tetris
+  %table
+    %tr
+      %td Score
+      %td 4249
+    %tr
+      %td One-liners cleared
+      %td 42
+    %tr
+      %td Two-liners cleared
+      %td 11
+    %tr
+      %td Three-liners cleared
+      %td 16
+  %span{:id => "game-over-menu", :class => "clickable large-text"} Back to menu
+
 %div{:id => "high-scores", :class => "screen"}
   %h1 Le Tetris
-  %div{:class => "large-text"}
   %table
     %tr
       %th Rank
@@ -28,7 +48,7 @@
       %td #3
       %td MAR
       %td 5430
-  %span{:id => "high-scores-menu", :class => "clickable"} Back to menu
+  %span{:id => "high-scores-menu", :class => "clickable large-text"} Back to menu
 
 :javascript
   letetris.run();
