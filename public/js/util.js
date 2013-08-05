@@ -27,11 +27,3 @@ util.shuffleArray = function(array) {
 
     return array;
 };
-
-util.action = {
-    left: 37,
-    right: 39,
-    rotate: 38,
-    drop: 40,
-    pause: 27
-};

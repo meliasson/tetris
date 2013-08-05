@@ -65,25 +65,25 @@ letetris.graphicalView.update = function(input) {
 letetris.graphicalView._fillCell = function(cell, pieceId) {
     switch (pieceId)
     {
-    case letetris.model.pieceDef.pieceId.iPiece:
+    case letetris.model.pieceDefinition.pieceId.iPiece:
         this._context.fillStyle = '#D95B43';
         break;
-    case letetris.model.pieceDef.pieceId.jPiece:
+    case letetris.model.pieceDefinition.pieceId.jPiece:
         this._context.fillStyle = '#ECD078';
         break;
-    case letetris.model.pieceDef.pieceId.lPiece:
+    case letetris.model.pieceDefinition.pieceId.lPiece:
         this._context.fillStyle = '#C02942';
         break;
-    case letetris.model.pieceDef.pieceId.oPiece:
+    case letetris.model.pieceDefinition.pieceId.oPiece:
         this._context.fillStyle = '#D1F2A5';
         break;
-    case letetris.model.pieceDef.pieceId.sPiece:
+    case letetris.model.pieceDefinition.pieceId.sPiece:
         this._context.fillStyle = '#7894EC';
         break;
-    case letetris.model.pieceDef.pieceId.tPiece:
+    case letetris.model.pieceDefinition.pieceId.tPiece:
         this._context.fillStyle = '#F56991';
         break;
-    case letetris.model.pieceDef.pieceId.zPiece:
+    case letetris.model.pieceDefinition.pieceId.zPiece:
         this._context.fillStyle = '#53777A';
         break;
     default:

@@ -9,7 +9,6 @@ letetris.screenManager.run = function() {
     this.gamePausedScreen.init();
     this.gameOverScreen.init();
     this.highScoresScreen.init();
-
     this.menuScreen.activate();
 };
 
@@ -20,14 +19,10 @@ letetris.screenManager.menuScreen = {};
 letetris.screenManager.menuScreen.init = function() {
     document.getElementById('menu-new-game').addEventListener(
         'click',
-        function() {
-            letetris.screenManager.menuScreen.startGame();
-        });
+        letetris.screenManager.menuScreen.startGame);
     document.getElementById('menu-high-scores').addEventListener(
         'click',
-        function() {
-            letetris.screenManager.menuScreen.toHighScores();
-        });
+        letetris.screenManager.menuScreen.toHighScores);
 };
 
 letetris.screenManager.menuScreen.activate = function() {
@@ -39,12 +34,12 @@ letetris.screenManager.menuScreen.deactivate = function() {
 };
 
 letetris.screenManager.menuScreen.startGame = function() {
-    this.deactivate();
+    letetris.screenManager.menuScreen.deactivate();
     letetris.screenManager.gameScreen.activate();
 };
 
 letetris.screenManager.menuScreen.toHighScores = function() {
-    this.deactivate();
+    letetris.screenManager.menuScreen.deactivate();
     letetris.screenManager.highScoresScreen.activate();
 };
 
@@ -55,14 +50,10 @@ letetris.screenManager.gamePausedScreen = {};
 letetris.screenManager.gamePausedScreen.init = function() {
     document.getElementById('game-paused-resume-game').addEventListener(
         'click',
-        function() {
-            letetris.screenManager.gamePausedScreen.resumeGame();
-        });
+        letetris.screenManager.gamePausedScreen.resumeGame);
     document.getElementById('game-paused-quit-game').addEventListener(
         'click',
-        function() {
-            letetris.screenManager.gamePausedScreen.quitGame();
-        });
+        letetris.screenManager.gamePausedScreen.quitGame);
 };
 
 letetris.screenManager.gamePausedScreen.activate = function() {
@@ -74,7 +65,7 @@ letetris.screenManager.gamePausedScreen.deactivate = function() {
 };
 
 letetris.screenManager.gamePausedScreen.resumeGame = function() {
-    this.deactivate();
+    letetris.screenManager.gamePausedScreen.deactivate();
     letetris.screenManager.gameScreen.reactivate();
 };
 
@@ -90,9 +81,7 @@ letetris.screenManager.gameOverScreen = {};
 letetris.screenManager.gameOverScreen.init = function() {
     document.getElementById('game-over-menu').addEventListener(
         'click',
-        function() {
-            letetris.screenManager.gameOverScreen.toMenu()
-        });
+        letetris.screenManager.gameOverScreen.toMenu);
 };
 
 letetris.screenManager.gameOverScreen.activate = function() {
@@ -104,7 +93,7 @@ letetris.screenManager.gameOverScreen.deactivate = function() {
 };
 
 letetris.screenManager.gameOverScreen.toMenu = function() {
-    this.deactivate();
+    letetris.screenManager.gameOverScreen.deactivate();
     letetris.screenManager.menuScreen.activate();
 };
 
@@ -115,9 +104,7 @@ letetris.screenManager.highScoresScreen = {};
 letetris.screenManager.highScoresScreen.init = function() {
     document.getElementById('high-scores-menu').addEventListener(
         'click',
-        function() {
-            letetris.screenManager.highScoresScreen.toMenu()
-        });
+        letetris.screenManager.highScoresScreen.toMenu);
 };
 
 letetris.screenManager.highScoresScreen.activate = function() {
@@ -129,7 +116,7 @@ letetris.screenManager.highScoresScreen.deactivate = function() {
 };
 
 letetris.screenManager.highScoresScreen.toMenu = function() {
-    this.deactivate();
+    letetris.screenManager.highScoresScreen.deactivate();
     letetris.screenManager.menuScreen.activate();
 };
 
@@ -143,14 +130,14 @@ letetris.screenManager.gameScreen.activate = function() {
     letetris.game.run(canvas);
 };
 
+letetris.screenManager.gameScreen.deactivate = function() {
+    document.getElementById('game').style.display = 'none';
+};
+
 letetris.screenManager.gameScreen.reactivate = function() {
     var canvas = document.getElementById('game');
     canvas.style.display = 'inline';
     letetris.game.resume();
-};
-
-letetris.screenManager.gameScreen.deactivate = function() {
-    document.getElementById('game').style.display = 'none';
 };
 
 letetris.screenManager.gameScreen.gamePaused = function() {

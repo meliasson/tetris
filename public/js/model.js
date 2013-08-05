@@ -4,14 +4,8 @@ var letetris = letetris || {};
 
 letetris.model = {};
 
-letetris.model.gameState = {
-    none: 0,
-    paused: 1,
-    over: 2
-};
-
 letetris.model.init = function() {
-    this.pieceGen.init();
+    this.pieceGeneration.init();
     this.gravity.init();
     this.grid.init();
 };
@@ -39,7 +33,7 @@ letetris.model.grid.def = {
 
 letetris.model.grid.init = function() {
     this.grid = this._initGrid();
-    this.piece = letetris.model.pieceGen.spawnPiece().piece;
+    this.piece = letetris.model.pieceGeneration.spawnPiece().piece;
 };
 
 letetris.model.grid.cellAvailable = function(cell) {
@@ -134,7 +128,7 @@ letetris.model.gravity._act = function() {
     this._freezePiece();
     this._removeFilledRows();
 
-    var spawn = letetris.model.pieceGen.spawnPiece();
+    var spawn = letetris.model.pieceGeneration.spawnPiece();
     if (spawn.validSpawn) {
         letetris.model.grid.piece = spawn.piece;
         return {
@@ -201,29 +195,37 @@ letetris.model.gravity._clearTopRow = function() {
 
 letetris.model.userInput = {};
 
+letetris.model.userInput.action = {
+    left: 37,
+    right: 39,
+    rotate: 38,
+    drop: 40,
+    pause: 27
+};
+
 letetris.model.userInput.apply = function(actions) {
-    if (actions[util.action.pause]) {
-        delete actions[util.action.pause];
+    if (actions[this.action.pause]) {
+        delete actions[this.action.pause];
         return { state: 'gamePaused' };
     }
 
-    if (actions[util.action.rotate]) {
-        delete actions[util.action.rotate];
+    if (actions[this.action.rotate]) {
+        delete actions[this.action.rotate];
         letetris.model.pieceMovement.rotatePiece();
     }
 
-    if (actions[util.action.left]) {
-        delete actions[util.action.left];
+    if (actions[this.action.left]) {
+        delete actions[this.action.left];
         letetris.model.pieceMovement.movePieceLeft();
     }
 
-    if (actions[util.action.right]) {
-        delete actions[util.action.right];
+    if (actions[this.action.right]) {
+        delete actions[this.action.right];
         letetris.model.pieceMovement.movePieceRight();
     }
 
-    if (actions[util.action.drop]) {
-        delete actions[util.action.drop];
+    if (actions[this.action.drop]) {
+        delete actions[this.action.drop];
         letetris.model.pieceMovement.dropPiece();
     }
 
@@ -354,13 +356,13 @@ letetris.model.pieceMovement.movePieceRight = function() {
 
 /* PIECE GENERATION */
 
-letetris.model.pieceGen = {};
+letetris.model.pieceGeneration = {};
 
-letetris.model.pieceGen.init = function() {
+letetris.model.pieceGeneration.init = function() {
     this._pieceBag = this._createPieceBag();
 };
 
-letetris.model.pieceGen.spawnPiece = function() {
+letetris.model.pieceGeneration.spawnPiece = function() {
     if (!this._pieceBag.length) {
         this._pieceBag = this._createPieceBag();
     }
@@ -388,45 +390,45 @@ letetris.model.pieceGen.spawnPiece = function() {
         piece: piece };
 };
 
-letetris.model.pieceGen._createPieceBag = function() {
+letetris.model.pieceGeneration._createPieceBag = function() {
     var pieceBag = [];
 
     for (var i = 0; i < 4; i++) {
-        pieceBag.push(new letetris.model.pieceDef.IPiece());
+        pieceBag.push(new letetris.model.pieceDefinition.IPiece());
     }
 
     for (var i = 0; i < 4; i++) {
-        pieceBag.push(new letetris.model.pieceDef.JPiece());
+        pieceBag.push(new letetris.model.pieceDefinition.JPiece());
     }
 
     for (var i = 0; i < 4; i++) {
-        pieceBag.push(new letetris.model.pieceDef.LPiece());
+        pieceBag.push(new letetris.model.pieceDefinition.LPiece());
     }
 
     for (var i = 0; i < 4; i++) {
-        pieceBag.push(new letetris.model.pieceDef.OPiece());
+        pieceBag.push(new letetris.model.pieceDefinition.OPiece());
     }
 
     for (var i = 0; i < 4; i++) {
-        pieceBag.push(new letetris.model.pieceDef.SPiece());
+        pieceBag.push(new letetris.model.pieceDefinition.SPiece());
     }
 
     for (var i = 0; i < 4; i++) {
-        pieceBag.push(new letetris.model.pieceDef.TPiece());
+        pieceBag.push(new letetris.model.pieceDefinition.TPiece());
     }
 
     for (var i = 0; i < 4; i++) {
-        pieceBag.push(new letetris.model.pieceDef.ZPiece());
+        pieceBag.push(new letetris.model.pieceDefinition.ZPiece());
     }
 
     return util.shuffleArray(pieceBag);
 };
 
-/* PIECE DEFINITIONS */
+/* PIECE DEFINITION */
 
-letetris.model.pieceDef = {};
+letetris.model.pieceDefinition = {};
 
-letetris.model.pieceDef.pieceId = {
+letetris.model.pieceDefinition.pieceId = {
     iPiece: 1,
     jPiece: 2,
     lPiece: 3,
@@ -436,11 +438,11 @@ letetris.model.pieceDef.pieceId = {
     zPiece: 7
 };
 
-letetris.model.pieceDef.JPiece = function() {
+letetris.model.pieceDefinition.JPiece = function() {
     this.position = {
         row: letetris.model.grid.def.pieceStartPosRow,
         col: letetris.model.grid.def.pieceStartPosCol };
-    this._id = letetris.model.pieceDef.pieceId.jPiece;
+    this._id = letetris.model.pieceDefinition.pieceId.jPiece;
     this._rotations = [
         [[this._id, 0, 0, 0],
          [this._id, this._id, this._id, 0],
@@ -464,7 +466,7 @@ letetris.model.pieceDef.JPiece = function() {
     ];
 };
 
-letetris.model.pieceDef.JPiece.prototype = {
+letetris.model.pieceDefinition.JPiece.prototype = {
     get rotation() {
         return this._rotations[0];
     },
@@ -478,11 +480,11 @@ letetris.model.pieceDef.JPiece.prototype = {
     }
 };
 
-letetris.model.pieceDef.LPiece = function() {
+letetris.model.pieceDefinition.LPiece = function() {
     this.position = {
         row: letetris.model.grid.def.pieceStartPosRow,
         col: letetris.model.grid.def.pieceStartPosCol };
-    this._id = letetris.model.pieceDef.pieceId.lPiece;
+    this._id = letetris.model.pieceDefinition.pieceId.lPiece;
     this._rotations = [
         [[0, 0, this._id, 0],
          [this._id, this._id, this._id, 0],
@@ -506,7 +508,7 @@ letetris.model.pieceDef.LPiece = function() {
     ];
 };
 
-letetris.model.pieceDef.LPiece.prototype = {
+letetris.model.pieceDefinition.LPiece.prototype = {
     get rotation() {
         return this._rotations[0];
     },
@@ -520,11 +522,11 @@ letetris.model.pieceDef.LPiece.prototype = {
     }
 };
 
-letetris.model.pieceDef.IPiece = function() {
+letetris.model.pieceDefinition.IPiece = function() {
     this.position = {
         row: letetris.model.grid.def.pieceStartPosRow,
         col: letetris.model.grid.def.pieceStartPosCol };
-    this._id = letetris.model.pieceDef.pieceId.iPiece;
+    this._id = letetris.model.pieceDefinition.pieceId.iPiece;
     this._rotations = [
         [[this._id, this._id, this._id, this._id],
          [0, 0, 0, 0],
@@ -538,7 +540,7 @@ letetris.model.pieceDef.IPiece = function() {
     ];
 };
 
-letetris.model.pieceDef.IPiece.prototype = {
+letetris.model.pieceDefinition.IPiece.prototype = {
     get rotation() {
         return this._rotations[0];
     },
@@ -552,11 +554,11 @@ letetris.model.pieceDef.IPiece.prototype = {
     }
 };
 
-letetris.model.pieceDef.OPiece = function() {
+letetris.model.pieceDefinition.OPiece = function() {
     this.position = {
         row: letetris.model.grid.def.pieceStartPosRow,
         col: letetris.model.grid.def.pieceStartPosCol };
-    this._id = letetris.model.pieceDef.pieceId.oPiece;
+    this._id = letetris.model.pieceDefinition.pieceId.oPiece;
     this._rotations = [
         [[0, this._id, this._id, 0],
          [0, this._id, this._id, 0],
@@ -565,7 +567,7 @@ letetris.model.pieceDef.OPiece = function() {
     ];
 };
 
-letetris.model.pieceDef.OPiece.prototype = {
+letetris.model.pieceDefinition.OPiece.prototype = {
     get rotation() {
         return this._rotations[0];
     },
@@ -579,11 +581,11 @@ letetris.model.pieceDef.OPiece.prototype = {
     }
 };
 
-letetris.model.pieceDef.SPiece = function() {
+letetris.model.pieceDefinition.SPiece = function() {
     this.position = {
         row: letetris.model.grid.def.pieceStartPosRow,
         col: letetris.model.grid.def.pieceStartPosCol };
-    this._id = letetris.model.pieceDef.pieceId.sPiece;
+    this._id = letetris.model.pieceDefinition.pieceId.sPiece;
     this._rotations = [
         [[0, this._id, this._id, 0, 0],
          [this._id, this._id, 0, 0],
@@ -597,7 +599,7 @@ letetris.model.pieceDef.SPiece = function() {
     ];
 };
 
-letetris.model.pieceDef.SPiece.prototype = {
+letetris.model.pieceDefinition.SPiece.prototype = {
     get rotation() {
         return this._rotations[0];
     },
@@ -611,11 +613,11 @@ letetris.model.pieceDef.SPiece.prototype = {
     }
 };
 
-letetris.model.pieceDef.ZPiece = function() {
+letetris.model.pieceDefinition.ZPiece = function() {
     this.position = {
         row: letetris.model.grid.def.pieceStartPosRow,
         col: letetris.model.grid.def.pieceStartPosCol };
-    this._id = letetris.model.pieceDef.pieceId.zPiece;
+    this._id = letetris.model.pieceDefinition.pieceId.zPiece;
     this._rotations = [
         [[this._id, this._id, 0, 0],
          [0, this._id, this._id, 0],
@@ -629,7 +631,7 @@ letetris.model.pieceDef.ZPiece = function() {
     ];
 };
 
-letetris.model.pieceDef.ZPiece.prototype = {
+letetris.model.pieceDefinition.ZPiece.prototype = {
     get rotation() {
         return this._rotations[0];
     },
@@ -643,11 +645,11 @@ letetris.model.pieceDef.ZPiece.prototype = {
     }
 };
 
-letetris.model.pieceDef.TPiece = function() {
+letetris.model.pieceDefinition.TPiece = function() {
     this.position = {
         row: letetris.model.grid.def.pieceStartPosRow,
         col: letetris.model.grid.def.pieceStartPosCol };
-    this._id = letetris.model.pieceDef.pieceId.tPiece;
+    this._id = letetris.model.pieceDefinition.pieceId.tPiece;
     this._rotations = [
         [[0, this._id, 0, 0],
          [this._id, this._id, this._id, 0],
@@ -671,7 +673,7 @@ letetris.model.pieceDef.TPiece = function() {
     ];
 };
 
-letetris.model.pieceDef.TPiece.prototype = {
+letetris.model.pieceDefinition.TPiece.prototype = {
     get rotation() {
         return this._rotations[0];
     },
