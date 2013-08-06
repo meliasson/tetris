@@ -70,7 +70,7 @@ letetris.screenManager.gamePausedScreen.resumeGame = function() {
 };
 
 letetris.screenManager.gamePausedScreen.quitGame = function() {
-    this.deactivate();
+    letetris.screenManager.gamePausedScreen.deactivate();
     letetris.screenManager.menuScreen.activate();
 };
 
