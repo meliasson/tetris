@@ -19,10 +19,10 @@ letetris.screenManager.menuScreen = {};
 letetris.screenManager.menuScreen.init = function() {
     document.getElementById('menu-new-game').addEventListener(
         'click',
-        letetris.screenManager.menuScreen.startGame);
+        this.startGame);
     document.getElementById('menu-high-scores').addEventListener(
         'click',
-        letetris.screenManager.menuScreen.toHighScores);
+        this.toHighScores);
 };
 
 letetris.screenManager.menuScreen.activate = function() {
@@ -50,10 +50,10 @@ letetris.screenManager.gamePausedScreen = {};
 letetris.screenManager.gamePausedScreen.init = function() {
     document.getElementById('game-paused-resume-game').addEventListener(
         'click',
-        letetris.screenManager.gamePausedScreen.resumeGame);
+        this.resumeGame);
     document.getElementById('game-paused-quit-game').addEventListener(
         'click',
-        letetris.screenManager.gamePausedScreen.quitGame);
+         this.quitGame);
 };
 
 letetris.screenManager.gamePausedScreen.activate = function() {

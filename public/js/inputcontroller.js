@@ -5,7 +5,12 @@ var letetris = letetris || {};
 letetris.inputController = {};
 
 letetris.inputController.init = function(canvas) {
-    this._canvas = canvas;
+    //this._canvas = canvas;
+    var grid = canvas.getBoundingClientRect();
+    this._canvasTop = grid.top;
+    this._canvasBottom = grid.bottom;
+    this._canvasLeft = grid.left;
+    this._canvasRight = grid.right;
     this._keysDown = {};
     this._addKeyEventListeners();
     this._addTouchEventListeners();
@@ -23,56 +28,28 @@ letetris.inputController._addTouchEventListeners = function() {
     addEventListener(
         'touchstart',
         function(e) {
-
-            var x = e.touches[0].pageX;
-            var y = e.touches[0].pageY;
-            var grid = game.controller._canvas.getBoundingClientRect();
-            var top = grid.top;
-            var bottom = grid.bottom;
-            var left = grid.left;
-            var right = grid.right;
-
-            if (x < left && y > top && y < bottom) {
-                letetris.inputController._keysDown[letetris.model.userInput.action.left] = true;
-            }
-
-            if (x > right && y > top && y < bottom) {
-                letetris.inputController._keysDown[letetris.model.userInput.action.right] = true;
-            }
-
-            if (x > left && x < right && y > bottom) {
-                letetris.inputController._keysDown[letetris.model.userInput.action.drop] = true;
-            }
-
-            if (x > left && x < right && y > top && y < bottom) {
-                letetris.inputController._keysDown[letetris.model.userInput.action.rotate] = true;
-            }
+            letetris.inputController._handleTouchEvent(e);
         });
 };
 
-letetris.inputController._handleTouchstartEvent = function(event) {
-    var x = e.touches[0].pageX;
-    var y = e.touches[0].pageY;
-    var grid = game.controller._canvas.getBoundingClientRect();
-    var top = grid.top;
-    var bottom = grid.bottom;
-    var left = grid.left;
-    var right = grid.right;
+letetris.inputController._handleTouchEvent = function(event) {
+    var x = event.touches[0].pageX;
+    var y = event.touches[0].pageY;
 
-    if (x < left && y > top && y < bottom) {
-        this._keysDown[letetris.model.userInput.action.left] = true;
+    if (x < this._canvasLeft && y > this._canvasTop && y < this._canvasBottom) {
+        letetris.inputController._keysDown[letetris.model.userInput.action.left] = true;
     }
 
-    if (x > right && y > top && y < bottom) {
-        this._keysDown[letetris.model.userInput.action.right] = true;
+    if (x > this._canvasRight && y > this._canvasTop && y < this._canvasBottom) {
+        letetris.inputController._keysDown[letetris.model.userInput.action.right] = true;
     }
 
-    if (x > left && x < right && y > bottom) {
-        this._keysDown[letetris.model.userInput.action.drop] = true;
+    if (x > this._canvasLeft && x < this._canvasRight && y > this._canvasBottom) {
+        letetris.inputController._keysDown[letetris.model.userInput.action.drop] = true;
     }
 
-    if (x > left && x < right && y > top && y < bottom) {
-        this._keysDown[letetris.model.userInput.action.rotate] = true;
+    if (x > this._canvasLeft && x < this._canvasRight && y > this._canvasTop && y < this._canvasBottom) {
+        letetris.inputController._keysDown[letetris.model.userInput.action.rotate] = true;
     }
 };
 
