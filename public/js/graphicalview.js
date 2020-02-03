@@ -6,7 +6,7 @@ letetris.graphicalView = {};
 
 letetris.graphicalView.init = function(canvas) {
     this._canvas = canvas;
-    this._cellSize = 20;
+    this._cellSize = canvas.width / 10;
     this._context = canvas.getContext("2d");
     this._context.fillStyle = '#DDDDDD';
     this._context.clearRect(0, 0, canvas.width, canvas.height);
@@ -66,27 +66,31 @@ letetris.graphicalView._fillCell = function(cell, pieceId) {
     switch (pieceId)
     {
     case letetris.model.pieceDefinition.pieceId.iPiece:
-        this._context.fillStyle = '#D95B43';
+        // this._context.fillStyle = '#D95B43';
+        this._context.fillStyle = '#00FF00';
         break;
     case letetris.model.pieceDefinition.pieceId.jPiece:
-        this._context.fillStyle = '#ECD078';
+        // this._context.fillStyle = '#ECD078';
+        this._context.fillStyle = '#005000';
         break;
     case letetris.model.pieceDefinition.pieceId.lPiece:
-        this._context.fillStyle = '#C02942';
+        // this._context.fillStyle = '#C02942';
+        this._context.fillStyle = '#007000';
         break;
     case letetris.model.pieceDefinition.pieceId.oPiece:
-        this._context.fillStyle = '#D1F2A5';
+        this._context.fillStyle = '#009000';
         break;
     case letetris.model.pieceDefinition.pieceId.sPiece:
-        this._context.fillStyle = '#7894EC';
+        this._context.fillStyle = '#00B000';
         break;
     case letetris.model.pieceDefinition.pieceId.tPiece:
-        this._context.fillStyle = '#F56991';
+        this._context.fillStyle = '#00D000';
         break;
     case letetris.model.pieceDefinition.pieceId.zPiece:
-        this._context.fillStyle = '#53777A';
+        this._context.fillStyle = '#00E800';
         break;
-    default:
+      default:
+        // TODO: Let's crash here instead!
         this._context.fillStyle = '#C02942';
         break;
     }
@@ -94,6 +98,6 @@ letetris.graphicalView._fillCell = function(cell, pieceId) {
     this._context.fillRect(
         cell.col * this._cellSize,
         cell.row * this._cellSize,
-        this._cellSize,
-        this._cellSize);
+        this._cellSize - 1,
+        this._cellSize - 1);
 }

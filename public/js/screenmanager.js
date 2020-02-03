@@ -5,6 +5,19 @@ var letetris = letetris || {};
 letetris.screenManager = {};
 
 letetris.screenManager.run = function() {
+    // TODO: Consider moving this setting of canvas size to
+    // somewhere else. And skip all the magic numbers...
+    var canvas = document.getElementById('game');
+    canvas.style.display = 'inline';
+    const heightOccupiedByBorder = 6;
+    const heightOccupiedByMargin = 20;
+    const heightOccupied = heightOccupiedByBorder + heightOccupiedByMargin * 2;
+    const height = window.innerHeight - heightOccupied;
+    const width = height / 2;
+    canvas.width = width - (width % 10);
+    canvas.style.left = window.innerWidth / 2 - canvas.width / 2;
+    canvas.height = height - (height % 20);
+
     this.menuScreen.init();
     this.gamePausedScreen.init();
     this.gameOverScreen.init();
@@ -131,7 +144,8 @@ letetris.screenManager.gameScreen.activate = function() {
 };
 
 letetris.screenManager.gameScreen.deactivate = function() {
-    document.getElementById('game').style.display = 'none';
+    // TODO: Maybe clear canvas of pieces here?
+    // document.getElementById('game').style.display = 'none';
 };
 
 letetris.screenManager.gameScreen.reactivate = function() {

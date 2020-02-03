@@ -6,7 +6,7 @@ html, body, ul {
 body {
     background-color: #222;
     color: #DDD;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Orbitron', sans-serif;
     font-size: 16px;
     margin: auto;
     text-align: center;
@@ -14,11 +14,12 @@ body {
 }
 
 h1 {
-    color: #FF1493;
-    font-size: 5em;
+    color: #ff3f3f;
+    font-size: 20vw;
+    font-weight: 900;
+    letter-spacing: -5px;
     line-height: 1;
     margin: 0 0 0.5em;
-    text-shadow: 0 0 15px #FF1493;
 }
 
 ul {
@@ -52,15 +53,20 @@ th, td {
 
 .screen {
     display: none;
-    margin: 2em 0;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .large-text {
     font-size: 2em;
+    color: #f3ea5f;
 }
 
 #game {
-    border: 1px solid;
+    border: 3px solid;
+    position: absolute;
+    display: block;
+    z-index: -1;
 }
 
 #game-over span, #high-scores span {
@@ -70,12 +76,12 @@ th, td {
 
 @media only screen and (max-width: 520px) {
     body {
-	font-size: 14px;
+        font-size: 14px;
     }
 }
 
 @media only screen and (max-width: 420px) {
     body {
-	font-size: 13px;
+        font-size: 13px;
     }
 }
